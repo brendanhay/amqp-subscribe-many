@@ -1,0 +1,6 @@
+---
+publish_to: amqp://localhost
+consume_from:
+  - amqp://localhost
+  - amqp://localhost
+  - amqp://localhost
