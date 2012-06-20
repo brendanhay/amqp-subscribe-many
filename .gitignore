@@ -1,0 +1,13 @@
+coverage
+coverage.data
+rdoc
+doc
+pkg
+
+.yardoc
+.bundle
+.DS_Store
+
+*~
+\#*
+.\#*
