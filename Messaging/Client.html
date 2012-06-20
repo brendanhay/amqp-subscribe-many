@@ -146,7 +146,7 @@ Defaults for declared exchanges and queues
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#declare_exchange-instance_method" title="#declare_exchange (instance method)">- (AMQP::Exchange) <strong>declare_exchange</strong>(channel, name, type) {|exchange| ... }</a>
+      <a href="#declare_exchange-instance_method" title="#declare_exchange (instance method)">- (AMQP::Exchange) <strong>declare_exchange</strong>(channel, name, type) </a>
     
 
     
@@ -171,7 +171,7 @@ Declare an exchange on the specified channel.
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#declare_queue-instance_method" title="#declare_queue (instance method)">- (AMQP::Queue) <strong>declare_queue</strong>(channel, exchange, name, key) {|queue| ... }</a>
+      <a href="#declare_queue-instance_method" title="#declare_queue (instance method)">- (AMQP::Queue) <strong>declare_queue</strong>(channel, exchange, name, key) </a>
     
 
     
@@ -206,7 +206,7 @@ key.
       <div class="method_details first">
   <h3 class="signature first" id="declare_exchange-instance_method">
   
-    - (<tt>AMQP::Exchange</tt>) <strong>declare_exchange</strong>(channel, name, type) {|exchange| ... }
+    - (<tt>AMQP::Exchange</tt>) <strong>declare_exchange</strong>(channel, name, type) 
   
 
   
@@ -260,21 +260,6 @@ Declare an exchange on the specified channel.
   
 </ul>
 
-<p class="tag_title">Yield Parameters:</p>
-<ul class="yieldparam">
-  
-    <li>
-      
-        <span class='name'>exchange</span>
-      
-      
-        <span class='type'>(<tt>AMQP::Exchange</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
@@ -295,6 +280,7 @@ Declare an exchange on the specified channel.
       <pre class="lines">
 
 
+25
 26
 27
 28
@@ -306,11 +292,10 @@ Declare an exchange on the specified channel.
 34
 35
 36
-37
-38</pre>
+37</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 26</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_declare_exchange'>declare_exchange</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_exchange'>exchange</span> <span class='op'>=</span>
@@ -333,7 +318,7 @@ Declare an exchange on the specified channel.
       <div class="method_details ">
   <h3 class="signature " id="declare_queue-instance_method">
   
-    - (<tt>AMQP::Queue</tt>) <strong>declare_queue</strong>(channel, exchange, name, key) {|queue| ... }
+    - (<tt>AMQP::Queue</tt>) <strong>declare_queue</strong>(channel, exchange, name, key) 
   
 
   
@@ -399,21 +384,6 @@ key.
   
 </ul>
 
-<p class="tag_title">Yield Parameters:</p>
-<ul class="yieldparam">
-  
-    <li>
-      
-        <span class='name'>queue</span>
-      
-      
-        <span class='type'>(<tt>AMQP::Queue</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
@@ -434,6 +404,8 @@ key.
       <pre class="lines">
 
 
+48
+49
 50
 51
 52
@@ -441,12 +413,10 @@ key.
 54
 55
 56
-57
-58
-59</pre>
+57</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 48</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_declare_queue'>declare_queue</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_exchange'>exchange</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_queue'>queue</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='const'>OPTIONS</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_queue'>queue</span><span class='op'>|</span>
@@ -468,7 +438,7 @@ key.
 </div>
 
     <div id="footer">
-  Generated on Wed Jun 20 10:24:01 2012 by
+  Generated on Wed Jun 20 10:37:01 2012 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.2.1 (ruby-1.9.2).
 </div>
