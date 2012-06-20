@@ -14,9 +14,9 @@ EXCHANGE  = "exchange"
 QUEUE     = "queue"
 KEY       = "key"
 
-EventMachine.run do
-  config = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
+config = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
 
+EventMachine.run do
   # Consume
   consumer = Messaging::Consumer.new(config["consume_from"])
 
