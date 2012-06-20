@@ -20,7 +20,6 @@ module Messaging
     # @param channel [AMQP::Channel]
     # @param name [String]
     # @param type [String]
-    # @yieldparam exchange [AMQP::Exchange]
     # @return [AMQP::Exchange]
     # @api public
     def declare_exchange(channel, name, type)
@@ -44,7 +43,6 @@ module Messaging
     # @param exchange [AMQP::Exchange]
     # @param name [String]
     # @param key [String]
-    # @yieldparam queue [AMQP::Queue]
     # @return [AMQP::Queue]
     # @api public
     def declare_queue(channel, exchange, name, key)
