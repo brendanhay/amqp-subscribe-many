@@ -70,7 +70,7 @@ module Messaging
         channel.prefetch(prefetch) if prefetch
 
         channel.on_error do |ch, error|
-          puts "Channel error: #{error.reply_text}, recovering"
+          puts "Channel error #{error.reply_text.inspect}, recovering"
         end
 
         puts "Channel #{channel.id} created"
@@ -89,19 +89,19 @@ module Messaging
       AMQP.start(options) do |connection, open_ok|
         # Handle TCP connection errors
         connection.on_tcp_connection_loss do |conn, settings|
-          puts "Connection to #{uri} lost, reconnecting"
+          puts "Connection to #{uri.inspect} lost, reconnecting"
 
           conn.periodically_reconnect(delay)
         end
 
         # Handle general errors
         connection.on_error do |conn, error|
-          puts "Connection to #{uri} lost, reconnecting"
+          puts "Connection to #{uri.inspect} lost, reconnecting"
 
           conn.periodically_reconnect(delay)
         end
 
-        puts "Connection to #{uri} started"
+        puts "Connection to #{uri.inspect} started"
       end
     end
 

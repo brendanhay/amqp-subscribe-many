@@ -40,7 +40,7 @@ module Messaging
         q  = declare_queue(channel, ex, queue, key)
 
         q.subscribe(:ack => true) do |meta, payload|
-          puts "Channel #{channel.id} received payload #{payload}"
+          puts "Channel #{channel.id} received payload #{payload.inspect}"
 
           block.call(meta, payload)
         end
