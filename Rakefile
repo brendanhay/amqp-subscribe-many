@@ -20,14 +20,14 @@ task :console do
 end
 
 Jeweler::Tasks.new do |gem|
-  gem.name = "the-perfect-gem"
-  gem.homepage = "http://github.com/brendanhay/the-perfect-gem"
-  gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
-  gem.email = "brendan.g.hay@gmail.com"
-  gem.authors = ["brendanhay"]
-  # dependencies defined in Gemfile
+  gem.name        = "amqp-subscribe-many"
+  gem.version     = "0.1.0"
+  gem.homepage    = "http://github.com/brendanhay/amqp-subscribe-many"
+  gem.license     = "BSD"
+  gem.summary     = %Q{TODO}
+  gem.description = %Q{TODO}
+  gem.email       = "brendan@soundcloud.com"
+  gem.authors     = ["brendanhay"]
 end
 
 Jeweler::RubygemsDotOrgTasks.new
