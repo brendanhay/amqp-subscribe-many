@@ -11,6 +11,7 @@ require "messaging"
 
 LOCALHOST = "amqp://localhost"
 EXCHANGE  = "exchange"
+TYPE      = "direct"
 QUEUE     = "queue"
 KEY       = "key"
 
@@ -20,7 +21,7 @@ EventMachine.run do
   # Consume
   consumer = Messaging::Consumer.new(config["consume_from"])
 
-  consumer.subscribe(EXCHANGE, QUEUE, KEY) do |meta, payload|
+  consumer.subscribe(EXCHANGE, TYPE, QUEUE, KEY) do |meta, payload|
     meta.ack
   end
 
@@ -28,7 +29,7 @@ EventMachine.run do
   producer = Messaging::Producer.new(config["publish_to"])
 
   EventMachine::add_periodic_timer(1) do
-    producer.publish(EXCHANGE, KEY, "some_random_payload")
+    producer.publish(EXCHANGE, TYPE, KEY, "some_random_payload")
   end
 
   trap("INT") { EventMachine.stop }

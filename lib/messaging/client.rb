@@ -2,9 +2,6 @@ require "amqp"
 
 module Messaging
 
-  # Default exchange type
-  EXCHANGE_TYPE = "direct"
-
   # Provides methods and constants required to establish an AMQP
   # connection and channel with failure handling and recovery.
   module Client
@@ -20,15 +17,18 @@ module Messaging
     # @param channel [AMQP::Channel]
     # @param name [String]
     # @param type [String]
+    # @param options [Hash]
     # @return [AMQP::Exchange]
     # @api public
-    def declare_exchange(channel, name, type)
+    def declare_exchange(channel, name, type, options = {})
+      options = OPTIONS.merge!(options)
+
       exchange =
         # Check if default options need to be supplied to a non-default delcaration
         if default_exchange?(name)
           channel.default_exchange
         else
-          channel.send(type, name, OPTIONS)
+          channel.send(type, name, options)
         end
 
       puts "Exchange #{exchange.name.inspect} declared"

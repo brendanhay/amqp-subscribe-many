@@ -28,15 +28,16 @@ module Messaging
     # Additionally declaring a binding to the specified exchange/key pair.
     #
     # @param exchange [String]
+    # @param type [String]
     # @param queue [String]
     # @param key [String]
     # @yieldparam meta [AMQP::Header]
     # @yieldparam payload [Object]
     # @return [Messaging::Consumer]
     # @api public
-    def subscribe(exchange, queue, key, &block)
+    def subscribe(exchange, type, queue, key, &block)
       channels.each do |channel|
-        ex = declare_exchange(channel, exchange, EXCHANGE_TYPE)
+        ex = declare_exchange(channel, exchange, type)
         q  = declare_queue(channel, ex, queue, key)
 
         q.subscribe(:ack => true) do |meta, payload|

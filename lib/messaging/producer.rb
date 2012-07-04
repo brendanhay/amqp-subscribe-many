@@ -21,13 +21,15 @@ module Messaging
     # Publish a payload to the specified exchange/key pair.
     #
     # @param exchange [String]
+    # @param type [String]
     # @param key [String]
     # @param payload [Object]
+    # @param options [Hash]
     # @return [Messaging::Producer]
     # @api public
-    def publish(exchange, key, payload)
+    def publish(exchange, type, key, payload, options = {})
       ex = @exchanges[exchange] ||=
-        declare_exchange(channel, exchange, EXCHANGE_TYPE)
+        declare_exchange(channel, exchange, type, options)
 
       ex.publish(payload, {
         :exchange    => exchange,
