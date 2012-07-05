@@ -17,9 +17,25 @@ KEY       = "key"
 
 # An example processor displaying how to setup subscriptions
 # and a message handler
-
 class Processor < Messaging::Base
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
+
+  def on_message(meta, payload)
+    puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
+  end
+end
+
+class ProcessorM
+  include Messaging::ProducerM
+  include Messaging::ConsumerM
+
+  subscribe(EXCHANGE, TYPE, QUEUE, KEY)
+
+  def initialize(options)
+    @publish_to, @consume_from = options[:publish_to], options[:consume_from]
+
+    super
+  end
 
   def on_message(meta, payload)
     puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
