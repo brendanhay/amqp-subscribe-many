@@ -18,8 +18,7 @@ module Messaging
       # @return [Array<Array(String, String, String, String)>]
       # @api public
       def subscribe(exchange, type, queue, key)
-        @subscriptions ||= []
-        @subscriptions << [exchange, type, queue, key]
+        subscriptions << [exchange, type, queue, key]
       end
 
       # A list of subscriptions created by {.subscribe}

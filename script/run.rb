@@ -19,6 +19,7 @@ KEY       = "key"
 # and a message handler
 class Processor < Messaging::Base
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
+  subscribe(EXCHANGE, TYPE, "ballsacks", KEY)
 
   def on_message(meta, payload)
     puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
