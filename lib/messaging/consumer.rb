@@ -23,7 +23,7 @@ module Messaging
     # @api public
     def initialize(uris, prefetch = 1)
       @connections = uris.map { |uri| open_connection(uri) }
-      @channels    = @connections.map { |conn| open_channel(conn, prefetch) }
+      @channels = @connections.map { |conn| open_channel(conn, prefetch) }
     end
 
     # Subscribe to a queue which will invoke the supplied block when

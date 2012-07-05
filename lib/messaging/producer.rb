@@ -20,9 +20,9 @@ module Messaging
     # @return [Messaging::Producer]
     # @api public
     def initialize(uri)
-      @exchanges  = {}
+      @exchanges = {}
       @connection = open_connection(uri)
-      @channel    = open_channel(@connection)
+      @channel = open_channel(@connection)
     end
 
     # Publish a payload to the specified exchange/key pair.
