@@ -2,7 +2,9 @@ require "amqp"
 
 module Messaging
 
+  #
   # Provides a publish mechanism for a single AMQP broker
+  #
   class Producer
     include Client
 
@@ -38,6 +40,10 @@ module Messaging
       self
     end
 
+    # Close the channel and then disconnect the connection.
+    #
+    # @return []
+    # @api public
     def disconnect
       channel.close do |close_ok|
         connection.disconnect

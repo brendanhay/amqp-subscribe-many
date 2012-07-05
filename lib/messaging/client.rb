@@ -2,8 +2,10 @@ require "amqp"
 
 module Messaging
 
+  #
   # Provides methods and constants required to establish an AMQP
   # connection and channel with failure handling and recovery.
+  #
   module Client
 
     # Defaults for declared exchanges and queues

@@ -15,27 +15,42 @@ TYPE      = "direct"
 QUEUE     = "queue"
 KEY       = "key"
 
+# An example processor displaying how to setup subscriptions
+# and a message handler
 class Processor < Messaging::Base
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
 
-  def on_message(meta, payload)
+  on_message do |meta, payload|
     puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
   end
 end
 
 EM.run do
-  config    = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
+  # Load the config
+  config = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
+
+  # Instantiate the example processor
   processor = Processor.new(config["publish_to"], config["consume_from"])
 
+  # Create a handle to the publish timer, to cancel later
   publisher = EM.add_periodic_timer(1) do
+    # Publish 5 messages at a time
     5.times { processor.publish(EXCHANGE, TYPE, KEY, "some_random_payload") }
   end
 
+  # Handle Ctrl-C interrupt
   trap("INT") do
+    # Cancel the publisher timer
     EM.cancel_timer(publisher)
 
+    # Disconnect the producer/consumer connections
     processor.disconnect
 
-    EM.add_timer(1) { EM.stop }
+    # Shutdown the EM loop
+    EM.add_timer(1) do
+      EM.stop
+
+      puts "Stopped."
+    end
   end
 end

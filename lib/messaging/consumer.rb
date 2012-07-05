@@ -2,8 +2,10 @@ require "amqp"
 
 module Messaging
 
+  #
   # Provides a mechanism to subscribe to identical queues on
   # multiple seperate AMQP brokers
+  #
   class Consumer
     include Client
 
@@ -44,6 +46,10 @@ module Messaging
       self
     end
 
+    # Close all channels and then disconnect all the connections.
+    #
+    # @return []
+    # @api public
     def disconnect
       channels.each do |chan|
         chan.close
