@@ -50,7 +50,11 @@ module Messaging
         @producer = Messaging::Producer.new(publish_to)
       end
 
-      if consume_from
+      if !consume_from && self.class.subscriptions.length > 0
+        raise(ArgumentError, "Subscriptions present but no consume_from uris specified")
+      end
+
+      if consume_from && self.class.subscriptions.length > 0
         @consumer = Messaging::Consumer.new(consume_from, prefetch)
         setup_subscriptions
       end
