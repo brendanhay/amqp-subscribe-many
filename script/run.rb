@@ -28,7 +28,7 @@ EventMachine.run do
   processor = Processor.new(config["publish_to"], config["consume_from"])
 
   EventMachine::add_periodic_timer(1) do
-    processor.publish(EXCHANGE, TYPE, KEY, "some_random_payload")
+    5.times { processor.publish(EXCHANGE, TYPE, KEY, "some_random_payload") }
   end
 
   trap("INT") do
