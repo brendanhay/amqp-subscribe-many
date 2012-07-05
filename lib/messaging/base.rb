@@ -8,7 +8,6 @@ module Messaging
   #
   class Base
     class << self
-
       # Subscribe to a queue which will invoke {#on_message}
       #
       # @param exchange [String]
@@ -33,18 +32,27 @@ module Messaging
 
     URI = "amqp://guest:guest@localhost:5672"
 
-    def initialize(publish_to = URI, consume_from = [URI])
-      @producer = Messaging::Producer.new(publish_to)
-      @consumer = Messaging::Consumer.new(consume_from)
+    # @return [Messaging::Producer]
+    # @api private
+    attr_reader :producer
 
-      self.class.subscriptions.each do |args|
-        @consumer.subscribe(*args) do |meta, payload|
-          # If this throws an exception, the connection
-          # will be closed, and the message requeued by the broker.
-          on_message(meta, payload)
+    # @return [Messaging::Consumer]
+    # @api private
+    attr_reader :consumer
 
-          meta.ack
-        end
+    # @param publish_to [String]
+    # @param consume_from [Array<String>]
+    # @param prefetch [Integer]
+    # @return [Messaging::Base]
+    # @api public
+    def initialize(publish_to = URI, consume_from = [URI], prefetch = 1)
+      if publish_to
+        @producer = Messaging::Producer.new(publish_to)
+      end
+
+      if consume_from
+        @consumer = Messaging::Consumer.new(consume_from, prefetch)
+        setup_subscriptions
       end
     end
 
@@ -68,7 +76,11 @@ module Messaging
     # @return [Messaging::Producer]
     # @api public
     def publish(exchange, type, key, payload, options = {})
-      @producer.publish(exchange, type, key, payload, options)
+      if producer
+        producer.publish(exchange, type, key, payload, options)
+      else
+        raise(RuntimeError, "Producer connection uri not specified")
+      end
     end
 
     # Disconnect/close both the producer and consumer connections and channels.
@@ -76,8 +88,22 @@ module Messaging
     # @return []
     # @api public
     def disconnect
-      @producer.disconnect
-      @consumer.disconnect
+      producer.disconnect if producer
+      consumer.disconnect if consumer
+    end
+
+    private
+
+    def setup_subscriptions
+      self.class.subscriptions.each do |args|
+        consumer.subscribe(*args) do |meta, payload|
+          # If this throws an exception, the connection
+          # will be closed, and the message requeued by the broker.
+          on_message(meta, payload)
+
+          meta.ack
+        end
+      end
     end
   end
 

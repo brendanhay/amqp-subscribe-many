@@ -17,9 +17,9 @@ KEY       = "key"
 
 # An example processor displaying how to setup subscriptions
 # and a message handler
+
 class Processor < Messaging::Base
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
-  subscribe(EXCHANGE, TYPE, "ballsacks", KEY)
 
   def on_message(meta, payload)
     puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
@@ -41,6 +41,8 @@ EM.run do
 
   # Handle Ctrl-C interrupt
   trap("INT") do
+    puts "Stopping..."
+
     # Cancel the publisher timer
     EM.cancel_timer(publisher)
 
@@ -48,10 +50,6 @@ EM.run do
     processor.disconnect
 
     # Shutdown the EM loop
-    EM.add_timer(1) do
-      EM.stop
-
-      puts "Stopped."
-    end
+    EM.add_timer(1) { EM.stop }
   end
 end
