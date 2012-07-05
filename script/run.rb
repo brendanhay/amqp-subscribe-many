@@ -27,11 +27,15 @@ EM.run do
   config    = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
   processor = Processor.new(config["publish_to"], config["consume_from"])
 
-  EM::add_periodic_timer(1) do
+  publisher = EM.add_periodic_timer(1) do
     5.times { processor.publish(EXCHANGE, TYPE, KEY, "some_random_payload") }
   end
 
   trap("INT") do
-    processor.disconnect { EM.stop }
+    EM.cancel_timer(publisher)
+
+    processor.disconnect
+
+    EM.add_timer(1) { EM.stop }
   end
 end

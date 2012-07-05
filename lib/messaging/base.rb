@@ -28,13 +28,9 @@ module Messaging
       @producer.send(:publish, *args)
     end
 
-    def disconnect(&block)
+    def disconnect
       @producer.disconnect
       @consumer.disconnect
-
-      EM.next_tick do
-        block.call
-      end
     end
 
     private
