@@ -18,17 +18,8 @@ KEY       = "key"
 # An example processor displaying how to setup subscriptions
 # and a message handler
 
-class Processor
-  include Messaging::ProducerM
-  include Messaging::ConsumerM
-
+class Processor < Messaging::Base
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
-
-  def initialize(publish_to, consume_from)
-    @publish_to, @consume_from = publish_to, consume_from
-
-    super
-  end
 
   def on_message(meta, payload)
     puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
@@ -40,7 +31,7 @@ EM.run do
   config = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
 
   # Instantiate the example processor
-  processor = Processor.new(config["publish_to"], config["consume_from"])
+  processor = Processor.new(config)
 
   # Create a handle to the publish timer, to cancel later
   publisher = EM.add_periodic_timer(1) do

@@ -40,23 +40,23 @@ module Messaging
     # @api private
     attr_reader :consumer
 
-    # @param publish_to [String]
-    # @param consume_from [Array<String>]
-    # @param prefetch [Integer]
+    # @param options [Hash]
+    # @option options [String] :publish_to
+    # @option options [Array<String>] :consume_from
+    # @option options [Integer] :prefetch
     # @return [Messaging::Base]
     # @api public
-    def initialize(publish_to = URI, consume_from = [URI], prefetch = 1)
-      if publish_to
+    def initialize(options = {})
+      if publish_to = options[:publish_to]
         @producer = Messaging::Producer.new(publish_to)
       end
 
-      if !consume_from && self.class.subscriptions.length > 0
-        raise(ArgumentError, "Subscriptions present but no consume_from uris specified")
-      end
+      if consume_from = options[:consume_from]
+        @consumer = Messaging::Consumer.new(consume_from, options[:prefetch] || 1)
 
-      if consume_from && self.class.subscriptions.length > 0
-        @consumer = Messaging::Consumer.new(consume_from, prefetch)
         setup_subscriptions
+      elsif subscriptions.length > 0
+        raise(ArgumentError, "Subscriptions present but no consume_from uris specified")
       end
     end
 
@@ -98,8 +98,21 @@ module Messaging
 
     private
 
+    # A list of subscriptions created by {.subscribe}
+    #
+    # @return [Array<Array(String, String, String, String)>]
+    # @api private
+    def subscriptions
+      self.class.subscriptions
+    end
+
+    # @api private
     def setup_subscriptions
-      self.class.subscriptions.each do |args|
+      if subscriptions.length == 0
+        raise(ArgumentError, "No subscriptions specified")
+      end
+
+      subscriptions.each do |args|
         consumer.subscribe(*args) do |meta, payload|
           # If this throws an exception, the connection
           # will be closed, and the message requeued by the broker.
