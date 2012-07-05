@@ -13,9 +13,8 @@ module Messaging
     # @param uri [String]
     # @return [Messaging::Producer]
     # @api public
-    def initialize(uri = "amqp://guest:guest@localhost:5672")
-      @uri = uri
-      @exchanges = {}
+    def initialize(uri)
+      @uri, @exchanges = uri, {}
     end
 
     # Publish a payload to the specified exchange/key pair.
@@ -37,6 +36,12 @@ module Messaging
       })
 
       self
+    end
+
+    def disconnect
+      channel.close do |close_ok|
+        connection.disconnect
+      end
     end
 
     private

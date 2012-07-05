@@ -15,22 +15,23 @@ TYPE      = "direct"
 QUEUE     = "queue"
 KEY       = "key"
 
-config = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
+class Processor < Messaging::Base
+  subscribe(EXCHANGE, TYPE, QUEUE, KEY)
+
+  def on_message(meta, payload)
+    puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
+  end
+end
 
 EventMachine.run do
-  # Consume
-  consumer = Messaging::Consumer.new(config["consume_from"])
-
-  consumer.subscribe(EXCHANGE, TYPE, QUEUE, KEY) do |meta, payload|
-    meta.ack
-  end
-
-  # Publish
-  producer = Messaging::Producer.new(config["publish_to"])
+  config    = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
+  processor = Processor.new(config["publish_to"], config["consume_from"])
 
   EventMachine::add_periodic_timer(1) do
-    producer.publish(EXCHANGE, TYPE, KEY, "some_random_payload")
+    processor.publish(EXCHANGE, TYPE, KEY, "some_random_payload")
   end
 
-  trap("INT") { EventMachine.stop }
+  trap("INT") do
+    processor.disconnect { EM.stop }
+  end
 end

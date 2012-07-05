@@ -19,7 +19,7 @@ module Messaging
     # @param prefetch [Integer, nil]
     # @return [Messaging::Consumer]
     # @api public
-    def initialize(uris = ["amqp://guest:guest@localhost:5672"], prefetch = 1)
+    def initialize(uris, prefetch = 1)
       @uris, @prefetch = uris, prefetch
     end
 
@@ -38,16 +38,20 @@ module Messaging
     def subscribe(exchange, type, queue, key, &block)
       channels.each do |channel|
         ex = declare_exchange(channel, exchange, type)
-        q  = declare_queue(channel, ex, queue, key)
-
-        q.subscribe(:ack => true) do |meta, payload|
-          puts "Channel #{channel.id} received payload #{payload.inspect}"
-
-          block.call(meta, payload)
-        end
+        declare_queue(channel, ex, queue, key).subscribe(:ack => true, &block)
       end
 
       self
+    end
+
+    def disconnect
+      channels.each do |chan|
+        chan.close
+      end
+
+      connections.each do |conn|
+        conn.disconnect
+      end
     end
 
     private

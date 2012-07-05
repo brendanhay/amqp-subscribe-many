@@ -21,14 +21,12 @@ module Messaging
     # @return [AMQP::Exchange]
     # @api public
     def declare_exchange(channel, name, type, options = {})
-      options = OPTIONS.merge!(options)
-
       exchange =
         # Check if default options need to be supplied to a non-default delcaration
         if default_exchange?(name)
           channel.default_exchange
         else
-          channel.send(type, name, options)
+          channel.send(type, name, OPTIONS.merge(options))
         end
 
       puts "Exchange #{exchange.name.inspect} declared"
@@ -86,7 +84,7 @@ module Messaging
     def open_connection(uri, delay = 5)
       options = AMQP::Client.parse_connection_uri(uri)
 
-      AMQP.start(options) do |connection, open_ok|
+      AMQP.connect(options) do |connection, open_ok|
         # Handle TCP connection errors
         connection.on_tcp_connection_loss do |conn, settings|
           puts "Connection to #{uri.inspect} lost, reconnecting"
