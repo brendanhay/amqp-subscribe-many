@@ -4,27 +4,31 @@ module Messaging
   # Used as a base class for creating a processor which can have many
   # subscriptions and a single message handler.
   #
-  # It essentially wraps the instantiation of both a producer and a consumer.
+  # It wraps the instantiation of both a producer and a consumer.
   #
   class Base
     class << self
 
-
-      def subscribe(*args)
+      # Subscribe to a queue which will invoke {#on_message}
+      #
+      # @param exchange [String]
+      # @param type [String]
+      # @param queue [String]
+      # @param key [String]
+      # @return [Array<Array(String, String, String, String)>]
+      # @api public
+      def subscribe(exchange, type, queue, key)
         @subscriptions ||= []
-        @subscriptions << args
+        @subscriptions << [exchange, type, queue, key]
       end
 
+      # A list of subscriptions created by {.subscribe}
+      # Intended for internal use.
+      #
+      # @return [Array<Array(String, String, String, String)>]
+      # @api private
       def subscriptions
         @subscriptions ||= []
-      end
-
-      def on_message(&block)
-        @on_message = block
-      end
-
-      def on_message_block
-        @on_message
       end
     end
 
@@ -35,14 +39,24 @@ module Messaging
       @consumer = Messaging::Consumer.new(consume_from)
 
       self.class.subscriptions.each do |args|
-        @consumer.send(:subscribe, *args) do |meta, payload|
-          # If this block.call throws an exception, the connection
-          # will be closed, and the message requeued.
-          self.class.on_message_block.call(meta, payload)
+        @consumer.subscribe(*args) do |meta, payload|
+          # If this throws an exception, the connection
+          # will be closed, and the message requeued by the broker.
+          on_message(meta, payload)
 
           meta.ack
         end
       end
+    end
+
+    # Overriden in the child class hierarchy to handle message delivery.
+    #
+    # @param meta [AMQP::Header]
+    # @param payload [Object]
+    # @raise [NotImplementedError]
+    # @api public
+    def on_message(meta, payload)
+      throw NotImplementedError
     end
 
     # Publish a payload to the specified exchange/key pair.
