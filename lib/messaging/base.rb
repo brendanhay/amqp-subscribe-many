@@ -7,30 +7,27 @@ module Messaging
   # It wraps the instantiation of both a producer and a consumer.
   #
   class Base
-    class << self
-      # Subscribe to a queue which will invoke {#on_message}
-      #
-      # @param exchange [String]
-      # @param type [String]
-      # @param queue [String]
-      # @param key [String]
-      # @return [Array<Array(String, String, String, String)>]
-      # @api public
-      def subscribe(exchange, type, queue, key)
-        subscriptions << [exchange, type, queue, key]
-      end
 
-      # A list of subscriptions created by {.subscribe}
-      # Intended for internal use.
-      #
-      # @return [Array<Array(String, String, String, String)>]
-      # @api private
-      def subscriptions
-        @subscriptions ||= []
-      end
+    # Subscribe to a queue which will invoke {#on_message}
+    #
+    # @param exchange [String]
+    # @param type [String]
+    # @param queue [String]
+    # @param key [String]
+    # @return [Array<Array(String, String, String, String)>]
+    # @api public
+    def self.subscribe(exchange, type, queue, key)
+      subscriptions << [exchange, type, queue, key]
     end
 
-    URI = "amqp://guest:guest@localhost:5672"
+    # A list of subscriptions created by {.subscribe}
+    # Intended for internal use.
+    #
+    # @return [Array<Array(String, String, String, String)>]
+    # @api private
+    def self.subscriptions
+      @subscriptions ||= []
+    end
 
     # @return [Messaging::Producer]
     # @api private
