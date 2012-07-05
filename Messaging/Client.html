@@ -90,10 +90,9 @@
 
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
-    <p>
-Provides methods and constants required to establish an AMQP connection and
-channel with failure handling and recovery.
-</p>
+    
+<p>Provides methods and constants required to establish an AMQP connection and
+channel with failure handling and recovery.</p>
 
 
   </div>
@@ -109,9 +108,8 @@ channel with failure handling and recovery.
         <dt id="OPTIONS-constant" class="">OPTIONS =
           <div class="docstring">
   <div class="discussion">
-    <p>
-Defaults for declared exchanges and queues
-</p>
+    
+<p>Defaults for declared exchanges and queues</p>
 
 
   </div>
@@ -146,7 +144,7 @@ Defaults for declared exchanges and queues
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#declare_exchange-instance_method" title="#declare_exchange (instance method)">- (AMQP::Exchange) <strong>declare_exchange</strong>(channel, name, type) </a>
+      <a href="#declare_exchange-instance_method" title="#declare_exchange (instance method)">- (AMQP::Exchange) <strong>declare_exchange</strong>(channel, name, type, options = {}) </a>
     
 
     
@@ -160,9 +158,8 @@ Defaults for declared exchanges and queues
   
 
   
-    <span class="summary_desc"><div class='inline'><p>
-Declare an exchange on the specified channel.
-</p>
+    <span class="summary_desc"><div class='inline'>
+<p>Declare an exchange on the specified channel.</p>
 </div></span>
   
 </li>
@@ -185,10 +182,9 @@ Declare an exchange on the specified channel.
   
 
   
-    <span class="summary_desc"><div class='inline'><p>
-Declare and bind a queue to the specified exchange via the supplied routing
-key.
-</p>
+    <span class="summary_desc"><div class='inline'>
+<p>Declare and bind a queue to the specified exchange via the supplied routing
+key.</p>
 </div></span>
   
 </li>
@@ -206,7 +202,7 @@ key.
       <div class="method_details first">
   <h3 class="signature first" id="declare_exchange-instance_method">
   
-    - (<tt>AMQP::Exchange</tt>) <strong>declare_exchange</strong>(channel, name, type) 
+    - (<tt>AMQP::Exchange</tt>) <strong>declare_exchange</strong>(channel, name, type, options = {}) 
   
 
   
@@ -214,9 +210,8 @@ key.
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>
-Declare an exchange on the specified channel.
-</p>
+    
+<p>Declare an exchange on the specified channel.</p>
 
 
   </div>
@@ -254,6 +249,19 @@ Declare an exchange on the specified channel.
       
         <span class='type'>(<tt>String</tt>)</span>
       
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
       
       
     </li>
@@ -297,13 +305,13 @@ Declare an exchange on the specified channel.
     <td>
       <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 25</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_declare_exchange'>declare_exchange</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_declare_exchange'>declare_exchange</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_exchange'>exchange</span> <span class='op'>=</span>
     <span class='comment'># Check if default options need to be supplied to a non-default delcaration
 </span>    <span class='kw'>if</span> <span class='id identifier rubyid_default_exchange?'>default_exchange?</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_default_exchange'>default_exchange</span>
     <span class='kw'>else</span>
-      <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='const'>OPTIONS</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='const'>OPTIONS</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
 
   <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Exchange </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exchange'>exchange</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_content'> declared</span><span class='tstring_end'>&quot;</span></span>
@@ -326,10 +334,9 @@ Declare an exchange on the specified channel.
   
 </h3><div class="docstring">
   <div class="discussion">
-    <p>
-Declare and bind a queue to the specified exchange via the supplied routing
-key.
-</p>
+    
+<p>Declare and bind a queue to the specified exchange via the supplied routing
+key.</p>
 
 
   </div>
@@ -438,7 +445,7 @@ key.
 </div>
 
     <div id="footer">
-  Generated on Wed Jun 20 10:37:01 2012 by
+  Generated on Thu Jul  5 14:28:47 2012 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.2.1 (ruby-1.9.2).
 </div>
