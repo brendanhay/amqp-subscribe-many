@@ -8,15 +8,21 @@ module Messaging
   class Producer
     include Client
 
-    # @return [String]
-    # @api public
-    attr_reader :uri
+    # @return [AMQP::Connection]
+    # @api private
+    attr_reader :connection
+
+    # @return [AMQP::Channel]
+    # @api private
+    attr_reader :channel
 
     # @param uri [String]
     # @return [Messaging::Producer]
     # @api public
     def initialize(uri)
-      @uri, @exchanges = uri, {}
+      @exchanges  = {}
+      @connection = open_connection(uri)
+      @channel    = open_channel(@connection)
     end
 
     # Publish a payload to the specified exchange/key pair.
@@ -48,20 +54,6 @@ module Messaging
       channel.close do |close_ok|
         connection.disconnect
       end
-    end
-
-    private
-
-    # @return [AMQP::Channel]
-    # @api private
-    def channel
-      @channel ||= open_channel(connection)
-    end
-
-    # @return [AMQP::Connection]
-    # @api private
-    def connection
-      @connection ||= open_connection(uri)
     end
   end
 

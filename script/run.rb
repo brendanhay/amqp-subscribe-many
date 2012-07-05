@@ -20,7 +20,7 @@ KEY       = "key"
 class Processor < Messaging::Base
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
 
-  on_message do |meta, payload|
+  def on_message(meta, payload)
     puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
   end
 end

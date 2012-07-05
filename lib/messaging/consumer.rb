@@ -9,20 +9,21 @@ module Messaging
   class Consumer
     include Client
 
-    # @return [Array<String>]
-    # @api public
-    attr_reader :uris
+    # @return [Array<AMQP::Connection>]
+    # @api private
+    attr_reader :connections
 
-    # @return [Integer, nil]
-    # @api public
-    attr_reader :prefetch
+    # @return [Array<AMQP::Channel>]
+    # @api private
+    attr_reader :channels
 
     # @param uris [Array<String>]
     # @param prefetch [Integer, nil]
     # @return [Messaging::Consumer]
     # @api public
     def initialize(uris, prefetch = 1)
-      @uris, @prefetch = uris, prefetch
+      @connections = uris.map { |uri| open_connection(uri) }
+      @channels    = @connections.map { |conn| open_channel(conn, prefetch) }
     end
 
     # Subscribe to a queue which will invoke the supplied block when
@@ -58,22 +59,6 @@ module Messaging
       connections.each do |conn|
         conn.disconnect
       end
-    end
-
-    private
-
-    # @return [Array<AMQP::Channel>]
-    # @api private
-    def channels
-      @channels ||= connections.map do |connection|
-        open_channel(connection, prefetch)
-      end
-    end
-
-    # @return [Array<AMQP::Connection>]
-    # @api private
-    def connections
-      @connections ||= uris.map { |uri| open_connection(uri) }
     end
   end
 
