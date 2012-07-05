@@ -50,7 +50,7 @@ EM.run do
   processor = Processor.new(config)
 
   # Create a handle to the publish timer, to cancel later
-  publisher = EM.add_periodic_timer(1) do
+  timer = EM.add_periodic_timer(1) do
     # Publish 5 messages at a time
     5.times { processor.publish(EXCHANGE, TYPE, KEY, "some_random_payload") }
   end
@@ -60,7 +60,7 @@ EM.run do
     puts "Stopping..."
 
     # Cancel the publisher timer
-    EM.cancel_timer(publisher)
+    EM.cancel_timer(timer)
 
     # Disconnect the producer/consumer connections
     processor.disconnect

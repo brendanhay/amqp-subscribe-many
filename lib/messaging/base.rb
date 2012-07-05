@@ -49,11 +49,12 @@ module Messaging
       end
 
       if consume_from = options[:consume_from]
-        @consumer = Messaging::Consumer.new(consume_from, options[:prefetch] || 1)
+        prefetch = options[:prefetch] || 1
+        @consumer = Messaging::Consumer.new(consume_from, prefetch)
 
         setup_subscriptions
       elsif subscriptions.length > 0
-        raise(ArgumentError, "Subscriptions present but no consume_from uris specified")
+        raise(ArgumentError, "Subscriptions present but no consume_from specified")
       end
     end
 
