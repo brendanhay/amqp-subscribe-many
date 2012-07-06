@@ -44,7 +44,7 @@ class DuplexProcessor
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
 
   def initialize(options)
-    @publish_to = options[:publish_to]
+    @publish_to   = options[:publish_to]
     @consume_from = options[:consume_from]
   end
 
