@@ -20,9 +20,7 @@ module Messaging
         subscriptions << [exchange, type, queue, key]
       end
 
-      # A list of subscriptions added by {.subscribe}
-      #
-      # Intended for internal use.
+      # A list of subscriptions intended for internal use.
       #
       # @return [Array<Array(String, String, String, String)>]
       # @api private
