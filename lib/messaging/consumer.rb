@@ -21,6 +21,7 @@ module Messaging
       end
 
       # A list of subscriptions added by {.subscribe}
+      #
       # Intended for internal use.
       #
       # @return [Array<Array(String, String, String, String)>]
