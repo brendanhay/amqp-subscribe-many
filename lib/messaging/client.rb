@@ -3,8 +3,16 @@ require "amqp"
 module Messaging
 
   #
+  # Raised when unrecoverable connection and channel errors are encountered.
+  #
+  class MessagingError < StandardError; end
+
+  #
   # Provides methods and constants required to establish an AMQP
   # connection and channel with failure handling and recovery.
+  # @see http://www.rabbitmq.com/amqp-0-9-1-reference.html#constants
+  #   For a list of error codes that will cause an exception to be raised
+  #   rather than invoking automatic recovery.
   #
   module Client
 
@@ -30,6 +38,10 @@ module Messaging
         connection.on_error do |conn, error|
           puts "Connection to #{uri.inspect} lost, reconnecting"
 
+          if (402..540).include?(error.reply_code)
+            raise(MessagingError, "Channel exception: #{error.reply_text.inspect}")
+          end
+
           conn.periodically_reconnect(delay)
         end
 
@@ -50,6 +62,12 @@ module Messaging
 
         channel.on_error do |ch, error|
           puts "Channel error #{error.reply_text.inspect}, recovering"
+
+          # Raise erroneous channel calls/conditions
+          # rather than endlessly retrying
+          if (403..406).include?(error.reply_code)
+            raise(MessagingError, "Channel exception: #{error.reply_text.inspect}")
+          end
         end
 
         puts "Channel #{channel.id} created"
