@@ -3,24 +3,6 @@ module Messaging
   module Producer
     include Client
 
-    # @return [Hash(String, AMQP::Exchange)]
-    # @api private
-    def producer_exchanges
-      @producer_exchanges ||= {}
-    end
-
-    # @return [AMQP::Connection]
-    # @api private
-    def producer_connection
-      @producer_connection ||= open_connection(config.publish_to)
-    end
-
-    # @return [AMQP::Channel]
-    # @api private
-    def producer_channel
-      @producer_channel ||= open_channel(producer_connection)
-    end
-
     # Publish a payload to the specified exchange/key pair.
     #
     # @param exchange [String]
@@ -51,6 +33,26 @@ module Messaging
       producer_channel.close do |close_ok|
         producer_connection.disconnect
       end
+    end
+
+    private
+
+    # @return [Hash(String, AMQP::Exchange)]
+    # @api private
+    def producer_exchanges
+      @producer_exchanges ||= {}
+    end
+
+    # @return [AMQP::Connection]
+    # @api private
+    def producer_connection
+      @producer_connection ||= open_connection(config.publish_to)
+    end
+
+    # @return [AMQP::Channel]
+    # @api private
+    def producer_channel
+      @producer_channel ||= open_channel(producer_connection)
     end
   end
 
