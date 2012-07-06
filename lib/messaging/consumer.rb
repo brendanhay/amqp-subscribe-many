@@ -1,6 +1,7 @@
 module Messaging
 
   module ConsumerExtensions
+
     # Subscribe to a queue which will invoke {#on_message}
     #
     # @param exchange [String]
