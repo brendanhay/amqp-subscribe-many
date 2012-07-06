@@ -78,7 +78,7 @@
   
   
     <dt class="r1">Included in:</dt>
-    <dd class="r1"><span class='object_link'><a href="Consumer.html" title="Messaging::Consumer (class)">Consumer</a></span>, <span class='object_link'><a href="Producer.html" title="Messaging::Producer (class)">Producer</a></span></dd>
+    <dd class="r1"><span class='object_link'><a href="Consumer.html" title="Messaging::Consumer (module)">Consumer</a></span>, <span class='object_link'><a href="Producer.html" title="Messaging::Producer (module)">Producer</a></span></dd>
     
   
   
@@ -100,33 +100,14 @@ channel with failure handling and recovery.</p>
 <div class="tags">
   
 
-</div>
-  <h2>Constant Summary</h2>
-  
-    <dl class="constants">
-      
-        <dt id="OPTIONS-constant" class="">OPTIONS =
-          <div class="docstring">
-  <div class="discussion">
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
     
-<p>Defaults for declared exchanges and queues</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
+      <li><a href="http://www.rabbitmq.com/amqp-0-9-1-reference.html#constants" target="_parent" title="For a list of error codes that will cause an exception to be raised rather than invoking automatic recovery.">For a list of error codes that will cause an exception to be raised rather than invoking automatic recovery.</a></li>
+    
+  </ul>
 
 </div>
-        </dt>
-        <dd><pre class="code"><span class='lbrace'>{</span>
-  <span class='symbol'>:auto_delete</span> <span class='op'>=&gt;</span> <span class='kw'>false</span><span class='comma'>,</span>
-  <span class='symbol'>:durable</span>     <span class='op'>=&gt;</span> <span class='kw'>true</span>
-<span class='rbrace'>}</span></pre></dd>
-      
-    </dl>
-  
-
 
 
 
@@ -168,7 +149,7 @@ channel with failure handling and recovery.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#declare_queue-instance_method" title="#declare_queue (instance method)">- (AMQP::Queue) <strong>declare_queue</strong>(channel, exchange, name, key) </a>
+      <a href="#declare_queue-instance_method" title="#declare_queue (instance method)">- (AMQP::Queue) <strong>declare_queue</strong>(channel, exchange, name, key, options = {}) </a>
     
 
     
@@ -185,6 +166,54 @@ channel with failure handling and recovery.</p>
     <span class="summary_desc"><div class='inline'>
 <p>Declare and bind a queue to the specified exchange via the supplied routing
 key.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#open_channel-instance_method" title="#open_channel (instance method)">- (AMQP::Channel) <strong>open_channel</strong>(connection, prefetch = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Open an AMQP::Channel with auto-recovery and error handling.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#open_connection-instance_method" title="#open_connection (instance method)">- (AMQP::Connection) <strong>open_connection</strong>(uri, delay = nil) </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Create an AMQP::Connection with auto-reconnect and error handling.</p>
 </div></span>
   
 </li>
@@ -288,22 +317,22 @@ key.</p>
       <pre class="lines">
 
 
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37</pre>
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 85</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_declare_exchange'>declare_exchange</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_exchange'>exchange</span> <span class='op'>=</span>
@@ -311,10 +340,10 @@ key.</p>
 </span>    <span class='kw'>if</span> <span class='id identifier rubyid_default_exchange?'>default_exchange?</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_default_exchange'>default_exchange</span>
     <span class='kw'>else</span>
-      <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='const'>OPTIONS</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
 
-  <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Exchange </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exchange'>exchange</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_content'> declared</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Exchange </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exchange'>exchange</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_content'> declared</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 
   <span class='id identifier rubyid_exchange'>exchange</span>
 <span class='kw'>end</span></pre>
@@ -326,7 +355,7 @@ key.</p>
       <div class="method_details ">
   <h3 class="signature " id="declare_queue-instance_method">
   
-    - (<tt>AMQP::Queue</tt>) <strong>declare_queue</strong>(channel, exchange, name, key) 
+    - (<tt>AMQP::Queue</tt>) <strong>declare_queue</strong>(channel, exchange, name, key, options = {}) 
   
 
   
@@ -389,6 +418,19 @@ key.</p>
       
     </li>
   
+    <li>
+      
+        <span class='name'>options</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+    </li>
+  
 </ul>
 
 <p class="tag_title">Returns:</p>
@@ -411,28 +453,278 @@ key.</p>
       <pre class="lines">
 
 
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57</pre>
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 48</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 109</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_declare_queue'>declare_queue</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_exchange'>exchange</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_queue'>queue</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='const'>OPTIONS</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_queue'>queue</span><span class='op'>|</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_declare_queue'>declare_queue</span><span class='lparen'>(</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_exchange'>exchange</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_queue'>queue</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_queue'>queue</span><span class='op'>|</span>
     <span class='comment'># Check if additional bindings are needed
 </span>    <span class='kw'>unless</span> <span class='id identifier rubyid_default_exchange?'>default_exchange?</span><span class='lparen'>(</span><span class='id identifier rubyid_exchange'>exchange</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_queue'>queue</span><span class='period'>.</span><span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='id identifier rubyid_exchange'>exchange</span><span class='comma'>,</span> <span class='const'>OPTIONS</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='symbol'>:routing_key</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_queue'>queue</span><span class='period'>.</span><span class='id identifier rubyid_bind'>bind</span><span class='lparen'>(</span><span class='id identifier rubyid_exchange'>exchange</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='symbol'>:routing_key</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_key'>key</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
 
-    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Queue </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_queue'>queue</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_content'> bound to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exchange'>exchange</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Queue </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_queue'>queue</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_content'> bound to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_exchange'>exchange</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="open_channel-instance_method">
+  
+    - (<tt>AMQP::Channel</tt>) <strong>open_channel</strong>(connection, prefetch = nil) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Open an AMQP::Channel with auto-recovery and error handling.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>connection</span>
+      
+      
+        <span class='type'>(<tt>AMQP::Connection</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>prefetch</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>AMQP::Channel</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 58</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_open_channel'>open_channel</span><span class='lparen'>(</span><span class='id identifier rubyid_connection'>connection</span><span class='comma'>,</span> <span class='id identifier rubyid_prefetch'>prefetch</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='const'>AMQP</span><span class='op'>::</span><span class='const'>Channel</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_connection'>connection</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_channel'>channel</span><span class='comma'>,</span> <span class='id identifier rubyid_open_ok'>open_ok</span><span class='op'>|</span>
+    <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_auto_recovery'>auto_recovery</span> <span class='op'>=</span> <span class='kw'>true</span>
+    <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_prefetch'>prefetch</span><span class='lparen'>(</span><span class='id identifier rubyid_prefetch'>prefetch</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_prefetch'>prefetch</span>
+
+    <span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_on_error'>on_error</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_ch'>ch</span><span class='comma'>,</span> <span class='id identifier rubyid_error'>error</span><span class='op'>|</span>
+      <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Channel error </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_reply_text'>reply_text</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_content'>, recovering</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+      <span class='comment'># Raise erroneous channel calls/conditions
+</span>      <span class='comment'># rather than endlessly retrying
+</span>      <span class='kw'>if</span> <span class='lparen'>(</span><span class='int'>403</span><span class='op'>..</span><span class='int'>406</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_reply_code'>reply_code</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_raise'>raise</span><span class='lparen'>(</span><span class='const'>MessagingError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Channel exception: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_reply_text'>reply_text</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Channel </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_channel'>channel</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rbrace'>}</span><span class='tstring_content'> created</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="open_connection-instance_method">
+  
+    - (<tt>AMQP::Connection</tt>) <strong>open_connection</strong>(uri, delay = nil) 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Create an AMQP::Connection with auto-reconnect and error handling.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>uri</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The AMQP URI to connect to.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>delay</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Time to delay between reconnection attempts.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>AMQP::Connection</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/messaging/client.rb', line 25</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_open_connection'>open_connection</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='comma'>,</span> <span class='id identifier rubyid_delay'>delay</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_delay'>delay</span> <span class='op'>||=</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_reconnect_delay'>reconnect_delay</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='const'>AMQP</span><span class='op'>::</span><span class='const'>Client</span><span class='period'>.</span><span class='id identifier rubyid_parse_connection_uri'>parse_connection_uri</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='rparen'>)</span>
+
+  <span class='const'>AMQP</span><span class='period'>.</span><span class='id identifier rubyid_connect'>connect</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_connection'>connection</span><span class='comma'>,</span> <span class='id identifier rubyid_open_ok'>open_ok</span><span class='op'>|</span>
+    <span class='comment'># Handle TCP connection errors
+</span>    <span class='id identifier rubyid_connection'>connection</span><span class='period'>.</span><span class='id identifier rubyid_on_tcp_connection_loss'>on_tcp_connection_loss</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_settings'>settings</span><span class='op'>|</span>
+      <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Connection to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_content'> lost, reconnecting</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+      <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_periodically_reconnect'>periodically_reconnect</span><span class='lparen'>(</span><span class='id identifier rubyid_delay'>delay</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Handle general errors
+</span>    <span class='id identifier rubyid_connection'>connection</span><span class='period'>.</span><span class='id identifier rubyid_on_error'>on_error</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='comma'>,</span> <span class='id identifier rubyid_error'>error</span><span class='op'>|</span>
+      <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Connection to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_content'> lost, reconnecting</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+      <span class='kw'>if</span> <span class='lparen'>(</span><span class='int'>402</span><span class='op'>..</span><span class='int'>540</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_reply_code'>reply_code</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_raise'>raise</span><span class='lparen'>(</span><span class='const'>MessagingError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Channel exception: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_reply_text'>reply_text</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_periodically_reconnect'>periodically_reconnect</span><span class='lparen'>(</span><span class='id identifier rubyid_delay'>delay</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Connection to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_uri'>uri</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbrace'>}</span><span class='tstring_content'> started</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -445,7 +737,7 @@ key.</p>
 </div>
 
     <div id="footer">
-  Generated on Thu Jul  5 14:28:47 2012 by
+  Generated on Fri Jul  6 16:18:06 2012 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.2.1 (ruby-1.9.2).
 </div>
