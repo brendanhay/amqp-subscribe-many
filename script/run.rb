@@ -63,7 +63,7 @@ EM.run do
   duplex.consume
 
   # Create a handle to the publish timer, to cancel later
-  timer = EM.add_periodic_timer(1) do
+  timer = EM.add_periodic_timer(0.1) do
     producer.publish(EXCHANGE, TYPE, KEY, "a_producer_payload")
     duplex.publish(EXCHANGE, TYPE, KEY, "a_duplex_payload")
   end
