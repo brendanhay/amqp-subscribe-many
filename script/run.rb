@@ -9,11 +9,10 @@ $:.unshift(File.dirname(__FILE__) + "/../lib")
 
 require "messaging"
 
-LOCALHOST = "amqp://localhost"
-EXCHANGE  = "exchange"
-TYPE      = "direct"
-QUEUE     = "queue"
-KEY       = "key"
+EXCHANGE = "exchange"
+TYPE     = "direct"
+QUEUE    = "queue"
+KEY      = "key"
 
 # Load the config
 yml = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
