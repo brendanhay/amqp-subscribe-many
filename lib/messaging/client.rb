@@ -7,6 +7,7 @@ module Messaging
   # connection and channel with failure handling and recovery.
   #
   module Client
+    extend self
 
     # Defaults for declared exchanges and queues
     OPTIONS = {
@@ -56,14 +57,12 @@ module Messaging
       end
     end
 
-    protected
-
     # Open an AMQP::Channel with auto-recovery and error handling.
     #
     # @param connection [AMQP::Connection]
     # @param prefetch [Integer, nil]
     # @return [AMQP::Channel]
-    # @api private
+    # @api public
     def open_channel(connection, prefetch = nil)
       AMQP::Channel.new(connection) do |channel, open_ok|
         channel.auto_recovery = true
@@ -82,7 +81,7 @@ module Messaging
     # @param uri [String] The AMQP URI to connect to.
     # @param delay [Integer] Time to delay between reconnection attempts.
     # @return [AMQP::Connection]
-    # @api private
+    # @api public
     def open_connection(uri, delay = 5)
       options = AMQP::Client.parse_connection_uri(uri)
 

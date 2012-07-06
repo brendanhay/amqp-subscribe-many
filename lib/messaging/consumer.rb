@@ -1,29 +1,53 @@
-require "amqp"
-
 module Messaging
 
-  #
-  # Provides a mechanism to subscribe to identical queues on
-  # multiple seperate AMQP brokers
-  #
-  class Consumer
-    include Client
+  module ConsumerExtensions
+    # Subscribe to a queue which will invoke {#on_message}
+    #
+    # @param exchange [String]
+    # @param type [String]
+    # @param queue [String]
+    # @param key [String]
+    # @return [Array<Array(String, String, String, String)>]
+    # @api public
+    def subscribe(exchange, type, queue, key)
+      subscriptions << [exchange, type, queue, key]
+    end
 
-    # @return [Array<AMQP::Connection>]
+    # A list of subscriptions created by {.subscribe}
+    # Intended for internal use.
+    #
+    # @return [Array<Array(String, String, String, String)>]
     # @api private
-    attr_reader :connections
+    def subscriptions
+      @subscriptions ||= []
+    end
+  end
 
-    # @return [Array<AMQP::Channel>]
-    # @api private
-    attr_reader :channels
+  module Consumer
+    def self.included(base)
+      base.extend(ConsumerExtensions)
+    end
 
-    # @param uris [Array<String>]
-    # @param prefetch [Integer, nil]
+    # @return [Array<String>]
+    # @api protected
+    attr_reader :consume_from
+
+    # @return [Integer, nil]
+    # @api protected
+    attr_reader :consume_prefetch
+
     # @return [Messaging::Consumer]
     # @api public
-    def initialize(uris, prefetch = 1)
-      @connections = uris.map { |uri| open_connection(uri) }
-      @channels = @connections.map { |conn| open_channel(conn, prefetch) }
+    def consume
+      unless consumer_channels
+        @consumer_channels ||= consumer_connections.map do |conn|
+          Client.open_channel(conn, consume_prefetch || 1)
+        end
+
+        subscriptions.each { |args| subscribe(*args) }
+      end
+
+      self
     end
 
     # Subscribe to a queue which will invoke the supplied block when
@@ -34,31 +58,69 @@ module Messaging
     # @param type [String]
     # @param queue [String]
     # @param key [String]
-    # @yieldparam meta [AMQP::Header]
-    # @yieldparam payload [Object]
     # @return [Messaging::Consumer]
     # @api public
-    def subscribe(exchange, type, queue, key, &block)
-      channels.each do |channel|
-        ex = declare_exchange(channel, exchange, type)
-        declare_queue(channel, ex, queue, key).subscribe(:ack => true, &block)
+    def subscribe(exchange, type, queue, key)
+      consumer_channels.each do |channel|
+        ex = Client.declare_exchange(channel, exchange, type)
+        q = Client.declare_queue(channel, ex, queue, key)
+
+        q.subscribe(:ack => true) do |meta, payload|
+          # If this throws an exception, the connection
+          # will be closed, and the message requeued by the broker.
+          on_message(meta, payload)
+
+          meta.ack
+        end
       end
 
       self
     end
 
-    # Close all channels and then disconnect all the connections.
+    # @throws [NotImplementedError]
+    # @api protected
+    def on_message(meta, payload)
+      throw NotImplementedError
+    end
+
+    # Close all consumer_channels and then disconnect all the consumer_connections.
     #
     # @return []
     # @api public
     def disconnect
-      channels.each do |chan|
+      consumer_channels.each do |chan|
         chan.close
       end
 
-      connections.each do |conn|
-        conn.disconnect
+      consumer_connections.each do |conn|
+        conn.disconnect && True
       end
+    end
+
+    private
+
+    # @return [Array<AMQP::Connection>]
+    # @api private
+    def consumer_connections
+      unless consume_from
+        raise(RuntimeError, "attr_reader 'consume_from' not set for mixin Messaging::Consumer")
+      end
+
+      @consumer_connections ||= consume_from.map do |uri|
+        Client.open_connection(uri)
+      end
+    end
+
+    # @return [Array<AMQP::Channel>]
+    # @api private
+    def consumer_channels
+      @consumer_channels
+    end
+
+    # @return [Array<Array(String, String, String, String)>]
+    # @api private
+    def subscriptions
+      self.class.subscriptions
     end
   end
 

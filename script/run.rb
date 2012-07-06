@@ -15,30 +15,41 @@ TYPE      = "direct"
 QUEUE     = "queue"
 KEY       = "key"
 
-# An example processor displaying how to setup subscriptions
-# and a message handler
-class Processor < Messaging::Base
-  subscribe(EXCHANGE, TYPE, QUEUE, KEY)
-
-  def on_message(meta, payload)
-    puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
-  end
-end
-
-class ProcessorM
-  include Messaging::ProducerM
-  include Messaging::ConsumerM
+class ConsumerProcessor
+  include Messaging::Consumer
 
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
 
   def initialize(options)
-    @publish_to, @consume_from = options[:publish_to], options[:consume_from]
-
-    super
+    @consume_from = options[:consume_from]
   end
 
   def on_message(meta, payload)
-    puts "Channel #{meta.channel.id} received payload #{payload.inspect}"
+    puts "ConsumeProcessor: Channel #{meta.channel.id} received payload #{payload.inspect}"
+  end
+end
+
+class ProducerProcessor
+  include Messaging::Producer
+
+  def initialize(options)
+    @publish_to = options[:publish_to]
+  end
+end
+
+class DuplexProcessor
+  include Messaging::Producer
+  include Messaging::Consumer
+
+  subscribe(EXCHANGE, TYPE, QUEUE, KEY)
+
+  def initialize(options)
+    @publish_to = options[:publish_to]
+    @consume_from = options[:consume_from]
+  end
+
+  def on_message(meta, payload)
+    puts "DuplexProcessor: Channel #{meta.channel.id} received payload #{payload.inspect}"
   end
 end
 
@@ -46,13 +57,19 @@ EM.run do
   # Load the config
   config = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
 
-  # Instantiate the example processor
-  processor = Processor.new(config)
+  # Instantiate the processors
+  consumer = ConsumerProcessor.new(config)
+  producer = ProducerProcessor.new(config)
+  duplex   = DuplexProcessor.new(config)
+
+  # Start the consumers
+  consumer.consume
+  duplex.consume
 
   # Create a handle to the publish timer, to cancel later
   timer = EM.add_periodic_timer(1) do
-    # Publish 5 messages at a time
-    5.times { processor.publish(EXCHANGE, TYPE, KEY, "some_random_payload") }
+    producer.publish(EXCHANGE, TYPE, KEY, "a_producer_payload")
+    duplex.publish(EXCHANGE, TYPE, KEY, "a_duplex_payload")
   end
 
   # Handle Ctrl-C interrupt
@@ -63,7 +80,9 @@ EM.run do
     EM.cancel_timer(timer)
 
     # Disconnect the producer/consumer connections
-    processor.disconnect
+    consumer.disconnect
+    producer.disconnect
+    duplex.disconnect
 
     # Shutdown the EM loop
     EM.add_timer(1) { EM.stop }

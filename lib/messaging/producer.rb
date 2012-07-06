@@ -1,28 +1,31 @@
-require "amqp"
-
 module Messaging
 
-  #
-  # Provides a publish mechanism for a single AMQP broker
-  #
-  class Producer
-    include Client
+  module Producer
+
+    # @return [Array<String>]
+    # @api protected
+    attr_reader :publish_to
+
+    # @return [Hash(String, AMQP::Exchange)]
+    # @api private
+    def producer_exchanges
+      @producer_exchanges ||= {}
+    end
 
     # @return [AMQP::Connection]
     # @api private
-    attr_reader :connection
+    def producer_connection
+      unless publish_to
+        raise(RuntimeError, "attr_reader 'publish_to' not set for mixin Messaging::Producer")
+      end
+
+      @producer_connection ||= Client.open_connection(publish_to)
+    end
 
     # @return [AMQP::Channel]
     # @api private
-    attr_reader :channel
-
-    # @param uri [String]
-    # @return [Messaging::Producer]
-    # @api public
-    def initialize(uri)
-      @exchanges = {}
-      @connection = open_connection(uri)
-      @channel = open_channel(@connection)
+    def producer_channel
+      @producer_channel ||= Client.open_channel(producer_connection)
     end
 
     # Publish a payload to the specified exchange/key pair.
@@ -35,8 +38,8 @@ module Messaging
     # @return [Messaging::Producer]
     # @api public
     def publish(exchange, type, key, payload, options = {})
-      ex = @exchanges[exchange] ||=
-        declare_exchange(channel, exchange, type, options)
+      ex = producer_exchanges[exchange] ||=
+        Client.declare_exchange(producer_channel, exchange, type, options)
 
       ex.publish(payload, {
         :exchange    => exchange,
@@ -51,8 +54,8 @@ module Messaging
     # @return []
     # @api public
     def disconnect
-      channel.close do |close_ok|
-        connection.disconnect
+      producer_channel.close do |close_ok|
+        producer_connection.disconnect
       end
     end
   end

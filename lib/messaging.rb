@@ -1,6 +1,3 @@
 require_relative "messaging/client"
 require_relative "messaging/producer"
-require_relative "messaging/producer_m"
 require_relative "messaging/consumer"
-require_relative "messaging/consumer_m"
-require_relative "messaging/base"
