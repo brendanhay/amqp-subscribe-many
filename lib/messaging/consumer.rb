@@ -64,6 +64,8 @@ module Messaging
         q  = declare_queue(channel, ex, queue, key, config.queue_options)
 
         q.subscribe(:ack => true) do |meta, payload|
+          log.debug("Receieved message on channel #{meta.channel.id} from queue #{queue.inspect}")
+
           # If this raises an exception, the connection
           # will be closed, and the message requeued by the broker.
           on_message(meta, payload)

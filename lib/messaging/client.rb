@@ -29,14 +29,14 @@ module Messaging
       AMQP.connect(options) do |connection, open_ok|
         # Handle TCP connection errors
         connection.on_tcp_connection_loss do |conn, settings|
-          puts "Connection to #{uri.inspect} lost, reconnecting"
+          log.error("Connection to #{uri.inspect} lost, reconnecting")
 
           conn.periodically_reconnect(delay)
         end
 
         # Handle general errors
         connection.on_error do |conn, error|
-          puts "Connection to #{uri.inspect} lost, reconnecting"
+          log.error("Connection to #{uri.inspect} lost, reconnecting")
 
           if (402..540).include?(error.reply_code)
             raise(MessagingError, "Channel exception: #{error.reply_text.inspect}")
@@ -45,7 +45,7 @@ module Messaging
           conn.periodically_reconnect(delay)
         end
 
-        puts "Connection to #{uri.inspect} started"
+        log.debug("Connection to #{uri.inspect} started")
       end
     end
 
@@ -61,7 +61,7 @@ module Messaging
         channel.prefetch(prefetch) if prefetch
 
         channel.on_error do |ch, error|
-          puts "Channel error #{error.reply_text.inspect}, recovering"
+          log.error("Channel error #{error.reply_text.inspect}, recovering")
 
           # Raise erroneous channel calls/conditions
           # rather than endlessly retrying
@@ -70,7 +70,7 @@ module Messaging
           end
         end
 
-        puts "Channel #{channel.id} created"
+        log.debug("Channel #{channel.id} created")
       end
     end
 
@@ -91,7 +91,7 @@ module Messaging
           channel.send(type, name, options)
         end
 
-      puts "Exchange #{exchange.name.inspect} declared"
+      log.debug("Exchange #{exchange.name.inspect} declared")
 
       exchange
     end
@@ -113,14 +113,18 @@ module Messaging
           queue.bind(exchange, { :routing_key => key })
         end
 
-        puts "Queue #{queue.name.inspect} bound to #{exchange.name.inspect}"
+        log.debug("Queue #{queue.name.inspect} bound to #{exchange.name.inspect}")
       end
     end
 
     protected
 
-    #
-    #
+    # @return [#info, #debug, #error]
+    # @api protected
+    def log
+      config.logger
+    end
+
     # @return [Messaging::Configuration]
     # @api protected
     def config

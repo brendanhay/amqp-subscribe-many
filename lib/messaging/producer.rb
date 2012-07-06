@@ -33,7 +33,7 @@ module Messaging
       ex = producer_exchanges[exchange] ||=
         declare_exchange(producer_channel, exchange, type, config.exchange_options)
 
-      puts "Publishing #{payload.inspect} to #{exchange.inspect} via #{key.inspect}"
+      log.debug("Publishing to exchange #{exchange.inspect} via #{key.inspect}")
 
       ex.publish(payload, {
         :exchange    => exchange,
