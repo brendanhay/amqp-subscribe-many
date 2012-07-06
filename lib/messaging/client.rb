@@ -7,13 +7,6 @@ module Messaging
   # connection and channel with failure handling and recovery.
   #
   module Client
-    extend self
-
-    # Defaults for declared exchanges and queues
-    OPTIONS = {
-      :auto_delete => false,
-      :durable     => true
-    }
 
     # Declare an exchange on the specified channel.
     #
@@ -29,7 +22,7 @@ module Messaging
         if default_exchange?(name)
           channel.default_exchange
         else
-          channel.send(type, name, OPTIONS.merge(options))
+          channel.send(type, name, options)
         end
 
       puts "Exchange #{exchange.name.inspect} declared"
@@ -44,45 +37,38 @@ module Messaging
     # @param exchange [AMQP::Exchange]
     # @param name [String]
     # @param key [String]
+    # @param options [Hash]
     # @return [AMQP::Queue]
     # @api public
-    def declare_queue(channel, exchange, name, key)
-      channel.queue(name, OPTIONS) do |queue|
+    def declare_queue(channel, exchange, name, key, options = {})
+      channel.queue(name, options) do |queue|
         # Check if additional bindings are needed
         unless default_exchange?(exchange.name)
-          queue.bind(exchange, OPTIONS.merge(:routing_key => key))
+          queue.bind(exchange, { :routing_key => key })
         end
 
         puts "Queue #{queue.name.inspect} bound to #{exchange.name.inspect}"
       end
     end
 
-    # Open an AMQP::Channel with auto-recovery and error handling.
+    protected
+
     #
-    # @param connection [AMQP::Connection]
-    # @param prefetch [Integer, nil]
-    # @return [AMQP::Channel]
-    # @api public
-    def open_channel(connection, prefetch = nil)
-      AMQP::Channel.new(connection) do |channel, open_ok|
-        channel.auto_recovery = true
-        channel.prefetch(prefetch) if prefetch
-
-        channel.on_error do |ch, error|
-          puts "Channel error #{error.reply_text.inspect}, recovering"
-        end
-
-        puts "Channel #{channel.id} created"
-      end
+    #
+    # @return [Messaging::Configuration]
+    # @api protected
+    def config
+      Configuration.instance
     end
 
     # Create an AMQP::Connection with auto-reconnect and error handling.
     #
     # @param uri [String] The AMQP URI to connect to.
-    # @param delay [Integer] Time to delay between reconnection attempts.
+    # @param delay [Integer, nil] Time to delay between reconnection attempts.
     # @return [AMQP::Connection]
-    # @api public
-    def open_connection(uri, delay = 5)
+    # @api protected
+    def open_connection(uri, delay = nil)
+      delay ||= config.reconnect_delay
       options = AMQP::Client.parse_connection_uri(uri)
 
       AMQP.connect(options) do |connection, open_ok|
@@ -101,6 +87,25 @@ module Messaging
         end
 
         puts "Connection to #{uri.inspect} started"
+      end
+    end
+
+    # Open an AMQP::Channel with auto-recovery and error handling.
+    #
+    # @param connection [AMQP::Connection]
+    # @param prefetch [Integer, nil]
+    # @return [AMQP::Channel]
+    # @api protected
+    def open_channel(connection, prefetch = nil)
+      AMQP::Channel.new(connection) do |channel, open_ok|
+        channel.auto_recovery = true
+        channel.prefetch(prefetch) if prefetch
+
+        channel.on_error do |ch, error|
+          puts "Channel error #{error.reply_text.inspect}, recovering"
+        end
+
+        puts "Channel #{channel.id} created"
       end
     end
 

@@ -1,10 +1,7 @@
 module Messaging
 
   module Producer
-
-    # @return [Array<String>]
-    # @api protected
-    attr_reader :publish_to
+    include Client
 
     # @return [Hash(String, AMQP::Exchange)]
     # @api private
@@ -15,17 +12,13 @@ module Messaging
     # @return [AMQP::Connection]
     # @api private
     def producer_connection
-      unless publish_to
-        raise(RuntimeError, "attr_reader 'publish_to' not set for mixin Messaging::Producer")
-      end
-
-      @producer_connection ||= Client.open_connection(publish_to)
+      @producer_connection ||= open_connection(config.publish_to)
     end
 
     # @return [AMQP::Channel]
     # @api private
     def producer_channel
-      @producer_channel ||= Client.open_channel(producer_connection)
+      @producer_channel ||= open_channel(producer_connection)
     end
 
     # Publish a payload to the specified exchange/key pair.
@@ -34,12 +27,11 @@ module Messaging
     # @param type [String]
     # @param key [String]
     # @param payload [Object]
-    # @param options [Hash]
     # @return [Messaging::Producer]
     # @api public
-    def publish(exchange, type, key, payload, options = {})
+    def publish(exchange, type, key, payload)
       ex = producer_exchanges[exchange] ||=
-        Client.declare_exchange(producer_channel, exchange, type, options)
+        declare_exchange(producer_channel, exchange, type, config.exchange_options)
 
       ex.publish(payload, {
         :exchange    => exchange,

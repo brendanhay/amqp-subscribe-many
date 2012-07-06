@@ -1,48 +1,46 @@
 module Messaging
 
-  module ConsumerExtensions
-
-    # Subscribe to a queue which will invoke {#on_message}
-    #
-    # @param exchange [String]
-    # @param type [String]
-    # @param queue [String]
-    # @param key [String]
-    # @return [Array<Array(String, String, String, String)>]
-    # @api public
-    def subscribe(exchange, type, queue, key)
-      subscriptions << [exchange, type, queue, key]
-    end
-
-    # A list of subscriptions created by {.subscribe}
-    # Intended for internal use.
-    #
-    # @return [Array<Array(String, String, String, String)>]
-    # @api private
-    def subscriptions
-      @subscriptions ||= []
-    end
-  end
-
   module Consumer
-    def self.included(base)
-      base.extend(ConsumerExtensions)
+    include Client
+
+    # DSL methods which are used to extend the target when
+    # {Messaging::Consumer} is included into a class.
+    module Extensions
+
+      # Subscribe to a queue which will invoke {Messaging::Consumer#on_message}
+      # upon receiving a message.
+      #
+      # @param exchange [String]
+      # @param type [String]
+      # @param queue [String]
+      # @param key [String]
+      # @return [Array<Array(String, String, String, String)>]
+      # @api public
+      def subscribe(exchange, type, queue, key)
+        subscriptions << [exchange, type, queue, key]
+      end
+
+      # A list of subscriptions added by {.subscribe}
+      # Intended for internal use.
+      #
+      # @return [Array<Array(String, String, String, String)>]
+      # @api private
+      def subscriptions
+        @subscriptions ||= []
+      end
+
     end
 
-    # @return [Array<String>]
-    # @api protected
-    attr_reader :consume_from
-
-    # @return [Integer, nil]
-    # @api protected
-    attr_reader :consume_prefetch
+    def self.included(base)
+      base.send(:extend, Extensions)
+    end
 
     # @return [Messaging::Consumer]
     # @api public
     def consume
       unless consumer_channels
         @consumer_channels ||= consumer_connections.map do |conn|
-          Client.open_channel(conn, consume_prefetch || 1)
+          open_channel(conn, config.prefetch)
         end
 
         subscriptions.each { |args| subscribe(*args) }
@@ -63,8 +61,8 @@ module Messaging
     # @api public
     def subscribe(exchange, type, queue, key)
       consumer_channels.each do |channel|
-        ex = Client.declare_exchange(channel, exchange, type)
-        q = Client.declare_queue(channel, ex, queue, key)
+        ex = declare_exchange(channel, exchange, type, config.exchange_options)
+        q  = declare_queue(channel, ex, queue, key, config.queue_options)
 
         q.subscribe(:ack => true) do |meta, payload|
           # If this raises an exception, the connection
@@ -78,7 +76,7 @@ module Messaging
       self
     end
 
-    # @throws [NotImplementedError]
+    # @raise [NotImplementedError]
     # @api protected
     def on_message(meta, payload)
       raise NotImplementedError
@@ -94,7 +92,7 @@ module Messaging
       end
 
       consumer_connections.each do |conn|
-        conn.disconnect && True
+        conn.disconnect
       end
     end
 
@@ -103,12 +101,8 @@ module Messaging
     # @return [Array<AMQP::Connection>]
     # @api private
     def consumer_connections
-      unless consume_from
-        raise(RuntimeError, "attr_reader 'consume_from' not set for mixin Messaging::Consumer")
-      end
-
-      @consumer_connections ||= consume_from.map do |uri|
-        Client.open_connection(uri)
+      @consumer_connections ||= config.consume_from.map do |uri|
+        open_connection(uri)
       end
     end
 

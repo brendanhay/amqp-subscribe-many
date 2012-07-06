@@ -15,15 +15,20 @@ TYPE      = "direct"
 QUEUE     = "queue"
 KEY       = "key"
 
+# Load the config
+yml = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
+
+# Setup configuration
+Messaging::Configuration.setup do |config|
+  config.publish_to   = yml[:publish_to]
+  config.consume_from = yml[:consume_from]
+end
+
 # Consume example
 class ConsumerProcessor
   include Messaging::Consumer
 
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
-
-  def initialize(options)
-    @consume_from = options[:consume_from]
-  end
 
   def on_message(meta, payload)
     puts "ConsumeProcessor: Channel #{meta.channel.id} received payload #{payload.inspect}"
@@ -33,10 +38,6 @@ end
 # Publish example
 class ProducerProcessor
   include Messaging::Producer
-
-  def initialize(options)
-    @publish_to = options[:publish_to]
-  end
 end
 
 # Consume + publish example
@@ -46,24 +47,17 @@ class DuplexProcessor
 
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
 
-  def initialize(options)
-    @publish_to   = options[:publish_to]
-    @consume_from = options[:consume_from]
-  end
-
   def on_message(meta, payload)
     puts "DuplexProcessor: Channel #{meta.channel.id} received payload #{payload.inspect}"
   end
 end
 
 EM.run do
-  # Load the config
-  config = YAML::load_file(File.dirname(__FILE__) + "/config.yml")
 
   # Instantiate the processors
-  consumer = ConsumerProcessor.new(config)
-  producer = ProducerProcessor.new(config)
-  duplex   = DuplexProcessor.new(config)
+  consumer = ConsumerProcessor.new
+  producer = ProducerProcessor.new
+  duplex   = DuplexProcessor.new
 
   # Start the consumers
   consumer.consume
