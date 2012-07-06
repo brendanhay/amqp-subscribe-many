@@ -15,7 +15,7 @@ TYPE      = "direct"
 QUEUE     = "queue"
 KEY       = "key"
 
-# Consume only processor example
+# Consume example
 class ConsumerProcessor
   include Messaging::Consumer
 
@@ -30,7 +30,7 @@ class ConsumerProcessor
   end
 end
 
-# Publish only example
+# Publish example
 class ProducerProcessor
   include Messaging::Producer
 

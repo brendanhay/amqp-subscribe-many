@@ -67,7 +67,7 @@ module Messaging
         q = Client.declare_queue(channel, ex, queue, key)
 
         q.subscribe(:ack => true) do |meta, payload|
-          # If this throws an exception, the connection
+          # If this raises an exception, the connection
           # will be closed, and the message requeued by the broker.
           on_message(meta, payload)
 
@@ -81,7 +81,7 @@ module Messaging
     # @throws [NotImplementedError]
     # @api protected
     def on_message(meta, payload)
-      throw NotImplementedError
+      raise NotImplementedError
     end
 
     # Close all consumer_channels and then disconnect all the consumer_connections.
