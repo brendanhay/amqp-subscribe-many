@@ -30,7 +30,7 @@ class ConsumerProcessor
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
 
   def on_message(meta, payload)
-    puts "ConsumeProcessor: Channel #{meta.channel.id} received payload #{payload.inspect}"
+    log.info("ConsumeProcessor channel #{meta.channel.id} received payload #{payload.inspect}")
   end
 end
 
@@ -47,7 +47,7 @@ class DuplexProcessor
   subscribe(EXCHANGE, TYPE, QUEUE, KEY)
 
   def on_message(meta, payload)
-    puts "DuplexProcessor: Channel #{meta.channel.id} received payload #{payload.inspect}"
+    log.info("DuplexProcessor channel #{meta.channel.id} received payload #{payload.inspect}")
   end
 end
 
@@ -63,7 +63,7 @@ EM.run do
   duplex.consume
 
   # Create a handle to the publish timer, to cancel later
-  timer = EM.add_periodic_timer(0.1) do
+  timer = EM.add_periodic_timer(0.5) do
     producer.publish(EXCHANGE, TYPE, KEY, "a_producer_payload")
     duplex.publish(EXCHANGE, TYPE, KEY, "a_duplex_payload")
   end

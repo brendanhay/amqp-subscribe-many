@@ -1,4 +1,5 @@
 require "singleton"
+require "logger"
 
 module Messaging
 
@@ -48,7 +49,7 @@ module Messaging
       @exchange_options = { :auto_delete => false, :durable => true }
       @queue_options    = exchange_options
       @reconnect_delay  = 5
-      @logger           = nil
+      @logger           = Logger.new(STDOUT)
     end
   end
 
