@@ -3,8 +3,10 @@ source "http://rubygems.org"
 gem "amqp"
 
 group :development do
-  gem "yard"
-  gem "redcarpet"
   gem "bundler"
+  gem "minitest", ">= 3.0"
+  gem "mocha"
   gem "jeweler"
+  gem "redcarpet"
+  gem "yard"
 end
