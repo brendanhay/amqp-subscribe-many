@@ -1,3 +1,7 @@
+#
+# Bundler
+#
+
 require "rubygems"
 require "bundler"
 
@@ -9,15 +13,39 @@ rescue Bundler::BundlerError => ex
   exit ex.status_code
 end
 
-require "rake"
-require "jeweler"
-require "yard"
 
-task :default => :console
+#
+# Tests
+#
+
+require "rake"
+require "rake/testtask"
+
+Rake::TestTask.new do |t|
+  t.libs.concat ["lib", "test"]
+  t.test_files = FileList["test/*_test.rb"]
+  t.verbose = true
+end
+
+task :default => :test
+
+
+#
+# Console
+#
 
 task :console do
   sh "irb -rubygems -I lib -r messaging.rb"
 end
+
+
+#
+# Gemify
+#
+
+require "jeweler"
+
+Jeweler::RubygemsDotOrgTasks.new
 
 Jeweler::Tasks.new do |gem|
   gem.name        = "amqp-subscribe-many"
@@ -30,6 +58,11 @@ Jeweler::Tasks.new do |gem|
   gem.authors     = ["brendanhay"]
 end
 
-Jeweler::RubygemsDotOrgTasks.new
+
+#
+# Docs
+#
+
+require "yard"
 
 YARD::Rake::YardocTask.new
