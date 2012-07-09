@@ -33,9 +33,24 @@ class ClientTest < MiniTest::Unit::TestCase
     conn.expects(:on_error).yields(on_error, error)
     conn.expects(:to_ary)
 
-    AMQP.stubs(:connect).returns(conn).yields(conn)
+    AMQP.stubs(:connect).yields(conn)
 
     @client.open_connection(@uri, delay)
+  end
+
+  def test_open_channel_adds_recovery_handlers
+    prefetch = 16
+
+    # Channel yield param
+    chan = mock()
+    chan.expects(:on_error)
+    chan.expects(:auto_recovery=).with(true)
+    chan.expects(:prefetch).with(prefetch)
+    chan.expects(:id)
+
+    AMQP::Channel.stubs(:new).yields(chan, {})
+
+    @client.open_channel(mock(), prefetch)
   end
 end
 
