@@ -7,30 +7,35 @@ end
 class ClientTest < MiniTest::Unit::TestCase
   def setup
     @client = DummyClient.new
-    @uri    = "amqp://guest:guest@localhost:5672"
+    @uri = "amqp://guest:guest@localhost:5672"
   end
 
-  def test_open_connection_adds_tcp_connection_loss_handler
+  def test_open_connection_adds_retry_handlers
     delay = 3
-    # conn  = @client.open_connection(@uri, delay)
-    # assert_false conn
-    pass
-  end
 
-  def test_tcp_connection_loss_handler_sets_periodic_reconnect_delay
-    pass
-  end
+    # Connection yield param
+    conn = mock()
 
-  def test_open_connection_adds_error_handler
-    pass
-  end
+    # on_tcp_connection_loss handler sets periodically reconnect
+    on_tcp_loss = mock()
+    on_tcp_loss.expects(:periodically_reconnect).with(delay)
+    on_tcp_loss.expects(:to_ary)
 
-  def test_error_handler_sets_periodic_reconnect_delay
-    pass
-  end
+    # A retryable/recoverable error code
+    error = mock()
+    error.expects(:reply_code).returns(1)
 
-  def test_error_handler_raises_messaging_error_for_unrecoverable_error_codes
-    pass
+    # on_error handler sets periodically reconnect
+    on_error = mock()
+    on_error.expects(:periodically_reconnect).with(delay)
+
+    conn.expects(:on_tcp_connection_loss).yields(on_tcp_loss)
+    conn.expects(:on_error).yields(on_error, error)
+    conn.expects(:to_ary)
+
+    AMQP.stubs(:connect).returns(conn).yields(conn)
+
+    @client.open_connection(@uri, delay)
   end
 end
 
