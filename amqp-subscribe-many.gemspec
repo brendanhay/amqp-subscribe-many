@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{amqp-subscribe-many}
-  s.version = "0.1.3"
+  s.version = "0.1.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{brendanhay}]
   s.date = %q{2012-07-10}
-  s.description = %q{'Publish-one, subscribe-many' pattern implementation}
+  s.description = %q{Codifies best practices and configuration when consuming from multiple AMQP brokers simultaneously}
   s.email = %q{brendan@soundcloud.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -43,7 +43,7 @@ Gem::Specification.new do |s|
   s.licenses = [%q{MPL}]
   s.require_paths = [%q{lib}]
   s.rubygems_version = %q{1.8.7}
-  s.summary = %q{'Publish-one, subscribe-many' pattern implementation}
+  s.summary = %q{An implementation of the publish one, subscribe many pattern}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
