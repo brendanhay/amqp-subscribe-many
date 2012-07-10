@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+require "rubygems"
+require "bundler"
+
+Bundler.setup(:default)
+
+$:.unshift(File.dirname(__FILE__) + "/../lib")
+
+require "messaging"
+
+require_relative "consumer_processor"
+require_relative "producer_processor"
+require_relative "duplex_processor"
+
+# Setup configuration
+Messaging::Configuration.setup do |config|
+  config.publish_to = "amqp://localhost"
+  config.consume_from = [
+    "amqp://localhost",
+    "amqp://localhost",
+    "amqp://localhost"
+  ]
+end
+
+EM.run do
+  # Instantiate the processors
+  consumer = ConsumerProcessor.new
+  producer = ProducerProcessor.new
+  duplex   = DuplexProcessor.new
+
+  # Start the consumers
+  consumer.consume
+  duplex.consume
+
+  # Create a handle to the publish timer, to cancel later
+  timer = EM.add_periodic_timer(0.5) do
+    producer.publish("exchange", "direct", "key", "a_producer_payload")
+    duplex.publish("exchange", "direct", "key", "a_duplex_payload")
+  end
+
+  # Handle Ctrl-C interrupt
+  trap("INT") do
+    puts "Stopping..."
+
+    # Cancel the publisher timer
+    EM.cancel_timer(timer)
+
+    # Disconnect the producer/consumer connections
+    consumer.disconnect
+    producer.disconnect
+    duplex.disconnect
+
+    # Shutdown the EM loop
+    EM.add_timer(1) { EM.stop }
+  end
+end
