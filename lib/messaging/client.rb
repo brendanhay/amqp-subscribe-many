@@ -39,7 +39,7 @@ module Messaging
           log.error("Connection to #{uri.inspect} lost, reconnecting")
 
           if (402..540).include?(error.reply_code)
-            raise(MessagingError, "Channel exception: #{error.reply_text.inspect}")
+            raise(MessagingError, "Connection exception: #{error.reply_text.inspect}")
           end
 
           conn.periodically_reconnect(delay)
