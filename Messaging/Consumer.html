@@ -130,7 +130,11 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>Extends the class into which the Consumer mixin is included with a
+subscribe method for declaritiviely specifying
+Consumer subscriptions.</p>
+</div></span>
   
 </li>
 
@@ -247,18 +251,31 @@ consumer_connections.</p>
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Extends the class into which the Consumer mixin is included with a
+subscribe method for declaritiviely specifying
+Consumer subscriptions.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-33
-34
-35</pre>
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 33</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 38</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_included'>included</span><span class='lparen'>(</span><span class='id identifier rubyid_base'>base</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='symbol'>:extend</span><span class='comma'>,</span> <span class='const'>Extensions</span><span class='rparen'>)</span>
@@ -314,20 +331,20 @@ invoking <span class='object_link'><a href="#on_message-instance_method" title="
       <pre class="lines">
 
 
-42
-43
-44
-45
-46
 47
 48
 49
 50
 51
-52</pre>
+52
+53
+54
+55
+56
+57</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_consume'>consume</span>
   <span class='kw'>unless</span> <span class='id identifier rubyid_consumer_channels'>consumer_channels</span>
@@ -390,18 +407,18 @@ consumer_connections.</p>
       <pre class="lines">
 
 
-66
-67
-68
-69
-70
 71
 72
 73
-74</pre>
+74
+75
+76
+77
+78
+79</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 66</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 71</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disconnect'>disconnect</span>
   <span class='id identifier rubyid_consumer_channels'>consumer_channels</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chan'>chan</span><span class='op'>|</span>
@@ -456,12 +473,12 @@ consumer_connections.</p>
       <pre class="lines">
 
 
-58
-59
-60</pre>
+63
+64
+65</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 58</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_on_message'>on_message</span><span class='lparen'>(</span><span class='id identifier rubyid_meta'>meta</span><span class='comma'>,</span> <span class='id identifier rubyid_payload'>payload</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>NotImplementedError</span>
@@ -476,7 +493,7 @@ consumer_connections.</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Jul 10 10:32:28 2012 by
+  Generated on Tue Jul 10 10:35:57 2012 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.2.1 (ruby-1.9.2).
 </div>
