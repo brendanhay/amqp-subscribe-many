@@ -4,7 +4,7 @@ BUNDLE=`which bundle`
 # Targets
 #
 
-.PHONY: deps doc
+.PHONY: deps test doc
 
 all: deps test
 
