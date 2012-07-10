@@ -99,7 +99,7 @@ module Messaging
     # @param queue [String]
     # @param key [String]
     # @return [Messaging::Consumer]
-    # @api public
+    # @api private
     def subscribe(exchange, type, queue, key)
       consumer_channels.each do |channel|
         ex = declare_exchange(channel, exchange, type, config.exchange_options)
