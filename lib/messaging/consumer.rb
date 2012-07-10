@@ -31,7 +31,7 @@ module Messaging
     end
 
     # Extends the class into which the Consumer mixin is included with
-    # a {Messaging::Consumer.subscribe} method for declaritiviely
+    # a {Messaging::Consumer.subscribe} method for declaratively
     # specifying Consumer subscriptions.
     #
     # @api public
