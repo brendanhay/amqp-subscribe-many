@@ -6,10 +6,13 @@ BUNDLE=`which bundle`
 
 .PHONY: deps doc
 
-all: deps
+all: deps test
 
 deps:
 	$(BUNDLE) install
+
+test:
+	$(BUNDLE) exec rake test
 
 doc:
 	$(BUNDLE) exec rake yard
