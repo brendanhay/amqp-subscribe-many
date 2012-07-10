@@ -49,9 +49,9 @@ Jeweler::RubygemsDotOrgTasks.new
 
 Jeweler::Tasks.new do |gem|
   gem.name        = "amqp-subscribe-many"
-  gem.version     = "0.1.1"
+  gem.version     = "0.1.2"
   gem.homepage    = "http://github.com/brendanhay/amqp-subscribe-many"
-  gem.license     = "BSD"
+  gem.license     = "MPL"
   gem.summary     = "'Publish-one, subscribe-many' pattern implementation"
   gem.description = gem.summary
   gem.email       = "brendan@soundcloud.com"
