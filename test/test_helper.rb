@@ -1,3 +1,7 @@
+require "simplecov"
+
+SimpleCov.start
+
 require "minitest/autorun"
 require "mocha"
 require "messaging"
@@ -14,3 +18,5 @@ class MiniTestSetup < MiniTest::Unit
 end
 
 MiniTest::Unit.runner = MiniTestSetup.new
+
+
