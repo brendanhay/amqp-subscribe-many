@@ -34,6 +34,9 @@ module Messaging
       base.send(:extend, Extensions)
     end
 
+    # Opens connections, channels, and sets up and specified subscriptions
+    # invoking {Messaging::Consumer#on_message} when a payload is received.
+    #
     # @return [Messaging::Consumer]
     # @api public
     def consume
@@ -48,6 +51,8 @@ module Messaging
       self
     end
 
+    # Invoked when a message is received from any of the subscriptions.
+    #
     # @raise [NotImplementedError]
     # @api protected
     def on_message(meta, payload)
