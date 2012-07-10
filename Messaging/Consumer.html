@@ -161,7 +161,10 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>Opens connections, channels, and sets up and specified subscriptions
+invoking <span class='object_link'><a href="#on_message-instance_method" title="Messaging::Consumer#on_message (method)">#on_message</a></span> when a payload is received.</p>
+</div></span>
   
 </li>
 
@@ -208,7 +211,9 @@ consumer_connections.</p>
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>Invoked when a message is received from any of the subscriptions.</p>
+</div></span>
   
 </li>
 
@@ -281,6 +286,9 @@ consumer_connections.</p>
 </h3><div class="docstring">
   <div class="discussion">
     
+<p>Opens connections, channels, and sets up and specified subscriptions
+invoking <span class='object_link'><a href="#on_message-instance_method" title="Messaging::Consumer#on_message (method)">#on_message</a></span> when a payload is received.</p>
+
 
   </div>
 </div>
@@ -306,9 +314,6 @@ consumer_connections.</p>
       <pre class="lines">
 
 
-39
-40
-41
 42
 43
 44
@@ -316,10 +321,13 @@ consumer_connections.</p>
 46
 47
 48
-49</pre>
+49
+50
+51
+52</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 42</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_consume'>consume</span>
   <span class='kw'>unless</span> <span class='id identifier rubyid_consumer_channels'>consumer_channels</span>
@@ -382,18 +390,18 @@ consumer_connections.</p>
       <pre class="lines">
 
 
-61
-62
-63
-64
-65
 66
 67
 68
-69</pre>
+69
+70
+71
+72
+73
+74</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 66</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_disconnect'>disconnect</span>
   <span class='id identifier rubyid_consumer_channels'>consumer_channels</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chan'>chan</span><span class='op'>|</span>
@@ -421,6 +429,8 @@ consumer_connections.</p>
 </h3><div class="docstring">
   <div class="discussion">
     
+<p>Invoked when a message is received from any of the subscriptions.</p>
+
 
   </div>
 </div>
@@ -446,12 +456,12 @@ consumer_connections.</p>
       <pre class="lines">
 
 
-53
-54
-55</pre>
+58
+59
+60</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'lib/messaging/consumer.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_on_message'>on_message</span><span class='lparen'>(</span><span class='id identifier rubyid_meta'>meta</span><span class='comma'>,</span> <span class='id identifier rubyid_payload'>payload</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>NotImplementedError</span>
@@ -466,7 +476,7 @@ consumer_connections.</p>
 </div>
 
     <div id="footer">
-  Generated on Tue Jul 10 10:29:58 2012 by
+  Generated on Tue Jul 10 10:32:28 2012 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.2.1 (ruby-1.9.2).
 </div>
