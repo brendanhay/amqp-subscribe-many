@@ -52,8 +52,8 @@ Jeweler::Tasks.new do |gem|
   gem.version     = "0.1.3"
   gem.homepage    = "http://github.com/brendanhay/amqp-subscribe-many"
   gem.license     = "MPL"
-  gem.summary     = "'Publish-one, subscribe-many' pattern implementation"
-  gem.description = gem.summary
+  gem.summary     = "An implementation of the publish one, subscribe many pattern"
+  gem.description = "Codifies best practices and configuration when consuming from multiple AMQP brokers simultaneously"
   gem.email       = "brendan@soundcloud.com"
   gem.authors     = ["brendanhay"]
 end
