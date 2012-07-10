@@ -53,5 +53,3 @@ class ClientTest < MiniTest::Unit::TestCase
     @client.open_channel(mock(), prefetch)
   end
 end
-
-
