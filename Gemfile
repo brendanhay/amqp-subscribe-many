@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "amqp"
+gem "amqp", ">= 0.9.6"
 
 group :development do
   gem "bundler"
