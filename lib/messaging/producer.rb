@@ -11,16 +11,16 @@ module Messaging
     # @param payload [Object]
     # @return [Messaging::Producer]
     # @api public
-    def publish(exchange, type, key, payload)
+    def publish(exchange, type, key, payload, options = {})
       ex = producer_exchanges[exchange] ||=
         declare_exchange(producer_channel, exchange, type, config.exchange_options)
 
       log.debug("Publishing to exchange #{exchange.inspect} via #{key.inspect}")
 
-      ex.publish(payload, {
+      ex.publish(payload, options.merge({
         :exchange    => exchange,
         :routing_key => key
-      })
+      }))
 
       self
     end
