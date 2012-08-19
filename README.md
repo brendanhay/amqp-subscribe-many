@@ -27,7 +27,7 @@ The pattern assumes a single load balanced publish point and multiple direct con
 In this scenario, a worker's single publish connection is load balanced to a broker. The workers have consumer connections to all possible brokers ensuring
 that no matter which broker a message ends up on the consumer can receive it.
 
-Exchanges, queues, and bindings need to all be declared upon connection, ensuring that all brokers will converge on the same set of routing information.
+Exchanges, queues, and bindings need to be declared upon connection, ensuring that all brokers will converge on the same set of routing information.
 
 Some buzzwor{th,d}y advantages of this setup include:
 
