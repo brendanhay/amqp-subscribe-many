@@ -140,8 +140,8 @@ module Messaging
       ["amq.direct",
        "amq.fanout",
        "amq.topic",
-       "amqp.headers",
-       "amqp.match"].include?(name)
+       "amq.headers",
+       "amq.match"].include?(name)
     end
   end
 
