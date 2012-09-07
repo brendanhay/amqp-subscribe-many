@@ -137,7 +137,9 @@ module Messaging
     # @return [Boolean]
     # @api private
     def default_exchange?(name)
-      ["amq.direct",
+      ["",
+       "amq.default",
+       "amq.direct",
        "amq.fanout",
        "amq.topic",
        "amq.headers",
