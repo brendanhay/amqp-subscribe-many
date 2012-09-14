@@ -114,8 +114,13 @@ module Messaging
       consumer_channels.each do |channel|
         ex = declare_exchange(channel, exchange, type, config.exchange_options)
         q  = declare_queue(channel, ex, queue, key, config.queue_options)
+        # An AMQP::Consumer is being explicitly provisioned versus relying on
+        # the AMQP::Queue#subscription facilities for provisioning one, because
+        # this one allows users of this library to register multiple
+        # subscriptions thereon.
+        c = AMQP::Consumer.new(channel, q)
 
-        q.subscribe(:ack => true) do |meta, payload|
+        c.consume().on_delivery do |meta, payload|
           log.debug("Receieved message on channel #{meta.channel.id} from queue #{queue.inspect}")
 
           # If this raises an exception, the connection
