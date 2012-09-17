@@ -60,12 +60,9 @@ module Messaging
     #
     # @param metadata [AMQP::Header] The message headers.
     # @param payload [String] The message payload.
-    # @param subscription_metadata [Hash[Symbol][String]] The subscription
-    #        specifications for this message, since much of this metadata is
-    #        not included in the actual message headers nor payload.
     # @raise [NotImplementedError]
     # @api protected
-    def on_message(metadata, payload, subscription_metadata)
+    def on_message(metadata, payload)
       raise NotImplementedError
     end
 
@@ -116,13 +113,6 @@ module Messaging
     # @return [Messaging::Consumer]
     # @api private
     def subscribe(exchange, type, queue, key)
-      subscription_metadata = {
-        exchange_name: exchange,
-        exchange_type: type,
-        queue_name:    queue,
-        routing_key:   key,
-      }.freeze
-
       consumer_channels.each do |channel|
         ex = declare_exchange(channel, exchange, type, config.exchange_options)
         q  = declare_queue(channel, ex, queue, key, config.queue_options)
@@ -138,9 +128,9 @@ module Messaging
           # If an exception is raised in on_message, we do not acknowledge the
           # message was actually processed.
           begin
-            on_message(meta, payload, subscription_metadata)
+            on_message(meta, payload)
             meta.ack
-          rescue Exception => e
+          rescue => e
             puts "Received exception #{e} for payload #{payload.inspect} " +
               "under #{subscription_metadata.inspect} with backtrace "+
               "#{e.backtrace.join('\n')}; continuing..."
