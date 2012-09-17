@@ -122,17 +122,17 @@ module Messaging
         # subscriptions thereon.
         c = AMQP::Consumer.new(channel, q)
 
-        c.consume().on_delivery do |meta, payload|
-          log.debug("Receieved message on channel #{meta.channel.id} from queue #{queue.inspect}")
+        c.consume().on_delivery do |metadata, payload|
+          log.debug("Receieved message on channel #{metadata.channel.id} from queue #{queue.inspect}")
 
           # If an exception is raised in on_message, we do not acknowledge the
           # message was actually processed.
           begin
-            on_message(meta, payload)
-            meta.ack
+            on_message(metadata, payload)
+            metadata.ack
           rescue => e
             puts "Received exception #{e} for payload #{payload.inspect} " +
-              "under #{subscription_metadata.inspect} with backtrace "+
+              "under #{metadata.headers.inspect} with backtrace "+
               "#{e.backtrace.join('\n')}; continuing..."
           end
         end
