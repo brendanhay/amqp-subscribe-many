@@ -119,6 +119,7 @@ module Messaging
 
         # Expliclity create an AMQP::Consumer rather than using
         # AMQP::Queue.subscription, which is a global singleton
+        # and prevents the creation of multiple subscriptions
         AMQP::Consumer.new(channel, q).consume.on_delivery do |meta, payload|
           log.debug("Receieved message on channel #{meta.channel.id} from queue #{queue.inspect}")
 
