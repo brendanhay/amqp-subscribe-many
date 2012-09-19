@@ -58,11 +58,11 @@ module Messaging
 
     # Invoked when a message is received from any of the subscriptions.
     #
-    # @param metadata [AMQP::Header] The message headers.
-    # @param payload [String] The message payload.
+    # @param meta [AMQP::Header] A wrapper around the AMQP headers and other metadata
+    # @param payload [String] The message payload
     # @raise [NotImplementedError]
     # @api protected
-    def on_message(metadata, payload)
+    def on_message(meta, payload)
       raise NotImplementedError
     end
 
@@ -119,21 +119,19 @@ module Messaging
 
         # Expliclity create an AMQP::Consumer rather than using
         # AMQP::Queue.subscription, which is a global singleton
-        consumer = AMQP::Consumer.new(channel, q)
+        AMQP::Consumer.new(channel, q).consume.on_delivery do |meta, payload|
+          log.debug("Receieved message on channel #{meta.channel.id} from queue #{queue.inspect}")
 
-        consumer.consume.on_delivery do |metadata, payload|
-          log.debug("Receieved message on channel #{metadata.channel.id} from queue #{queue.inspect}")
-
-          # If an exception is raised in on_message, we do not acknowledge the
-          # message was actually processed.
+          # If an exception is raised in on_message, the message will not be
+          # acknowledged and the exception will be logged and re-raised
           begin
-            on_message(metadata, payload)
+            on_message(meta, payload)
 
-            metadata.ack
+            meta.ack
           rescue => ex
             log.error("Exception: #{ex}, " \
               "Payload: #{payload.inspect}, " \
-              "Headers: #{metadata.headers.inspect}\n" \
+              "Headers: #{meta.headers.inspect}\n" \
               "Backtrace:\n#{ex.backtrace.join('\n')}")
 
             # Re-raise the exception
