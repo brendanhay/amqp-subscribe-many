@@ -58,7 +58,7 @@ module Messaging
 
     # Invoked when a message is received from any of the subscriptions.
     #
-    # @param meta [AMQP::Header] A wrapper around the AMQP headers and other metadata
+    # @param meta [AMQP::Header] A wrapper around the AMQP headers, and ruby-amqp metadata
     # @param payload [String] The message payload
     # @raise [NotImplementedError]
     # @api protected
