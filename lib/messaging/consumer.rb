@@ -116,24 +116,28 @@ module Messaging
       consumer_channels.each do |channel|
         ex = declare_exchange(channel, exchange, type, config.exchange_options)
         q  = declare_queue(channel, ex, queue, key, config.queue_options)
-        # An AMQP::Consumer is being explicitly provisioned versus relying on
-        # the AMQP::Queue#subscription facilities for provisioning one, because
-        # this one allows users of this library to register multiple
-        # subscriptions thereon.
-        c = AMQP::Consumer.new(channel, q)
 
-        c.consume().on_delivery do |metadata, payload|
+        # Expliclity create an AMQP::Consumer rather than using
+        # AMQP::Queue.subscription, which is a global singleton
+        consumer = AMQP::Consumer.new(channel, q)
+
+        consumer.consume.on_delivery do |metadata, payload|
           log.debug("Receieved message on channel #{metadata.channel.id} from queue #{queue.inspect}")
 
           # If an exception is raised in on_message, we do not acknowledge the
           # message was actually processed.
           begin
             on_message(metadata, payload)
+
             metadata.ack
-          rescue => e
-            puts "Received exception #{e} for payload #{payload.inspect} " +
-              "under #{metadata.headers.inspect} with backtrace "+
-              "#{e.backtrace.join('\n')}; continuing..."
+          rescue => ex
+            log.error("Exception: #{ex}, " \
+              "Payload: #{payload.inspect}, " \
+              "Headers: #{metadata.headers.inspect}\n" \
+              "Backtrace:\n#{ex.backtrace.join('\n')}")
+
+            # Re-raise the exception
+            raise ex
           end
         end
       end
