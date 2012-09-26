@@ -10,6 +10,9 @@ module Messaging
       # Subscribe to a queue which will invoke {Messaging::Consumer#on_message}
       # upon receiving a message.
       #
+      # Evaluation: Lazy - #consume is required on the instance to evaluate
+      # and declare the subscriptions.
+      #
       # @param exchange [String]
       # @param type [String]
       # @param queue [String]
@@ -41,6 +44,9 @@ module Messaging
 
     # Opens connections, channels, and sets up and specified subscriptions
     # invoking {Messaging::Consumer#on_message} when a payload is received.
+    #
+    # Evaluation: Eager - This is only required to evaluate and declare the
+    # subscriptions which have been deffered using class .subscribe
     #
     # @return [Messaging::Consumer]
     # @api public
@@ -80,38 +86,19 @@ module Messaging
       end
     end
 
-    private
-
-    # @return [Array<AMQP::Connection>]
-    # @api private
-    def consumer_connections
-      @consumer_connections ||= config.consume_from.map do |uri|
-        open_connection(uri)
-      end
-    end
-
-    # @return [Array<AMQP::Channel>]
-    # @api private
-    def consumer_channels
-      @consumer_channels
-    end
-
-    # @return [Array<Array(String, String, String, String)>]
-    # @api private
-    def subscriptions
-      self.class.subscriptions
-    end
-
     # Subscribe to a queue which will invoke the supplied block when
     # a message is received.
     # Additionally declaring a binding to the specified exchange/key pair.
+    #
+    # Evaluation: Eager - this will be evaluated when called.
+    # Calls to #consume are not required.
     #
     # @param exchange [String]
     # @param type [String]
     # @param queue [String]
     # @param key [String]
     # @return [Messaging::Consumer]
-    # @api private
+    # @api public
     def subscribe(exchange, type, queue, key)
       consumer_channels.each do |channel|
         ex = declare_exchange(channel, exchange, type, config.exchange_options)
@@ -143,6 +130,28 @@ module Messaging
 
       self
     end
-  end
 
+    private
+
+    # @return [Array<AMQP::Connection>]
+    # @api private
+    def consumer_connections
+      @consumer_connections ||= config.consume_from.map do |uri|
+        open_connection(uri)
+      end
+    end
+
+    # @return [Array<AMQP::Channel>]
+    # @api private
+    def consumer_channels
+      @consumer_channels
+    end
+
+    # @return [Array<Array(String, String, String, String)>]
+    # @api private
+    def subscriptions
+      self.class.subscriptions
+    end
+
+  end
 end
