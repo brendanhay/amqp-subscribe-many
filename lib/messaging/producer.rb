@@ -25,16 +25,6 @@ module Messaging
       self
     end
 
-    # Close the channel and then disconnect the connection.
-    #
-    # @return []
-    # @api public
-    def disconnect
-      producer_channel.close do |close_ok|
-        producer_connection.disconnect
-      end
-    end
-
     private
 
     # @return [Hash(String, AMQP::Exchange)]

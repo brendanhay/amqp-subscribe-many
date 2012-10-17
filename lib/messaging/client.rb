@@ -26,7 +26,7 @@ module Messaging
       delay ||= config.reconnect_delay
       options = AMQP::Client.parse_connection_uri(uri)
 
-      AMQP.connect(options) do |connection, open_ok|
+      res = AMQP.connect(options) do |connection, open_ok|
         # Handle TCP connection errors
         connection.on_tcp_connection_loss do |conn, settings|
           log.error("Connection to #{uri.inspect} lost, reconnecting")
@@ -47,6 +47,8 @@ module Messaging
 
         log.debug("Connection to #{uri.inspect} started")
       end
+
+      register_connection(res)
     end
 
     # Open an AMQP::Channel with auto-recovery and error handling.
@@ -56,7 +58,7 @@ module Messaging
     # @return [AMQP::Channel]
     # @api public
     def open_channel(connection, prefetch = nil)
-      AMQP::Channel.new(connection) do |channel, open_ok|
+      res = AMQP::Channel.new(connection) do |channel, open_ok|
         channel.auto_recovery = true
         channel.prefetch(prefetch) if prefetch
 
@@ -72,6 +74,8 @@ module Messaging
 
         log.debug("Channel #{channel.id} created")
       end
+
+      register_channel(res)
     end
 
     # Declare an exchange on the specified channel.
@@ -117,6 +121,20 @@ module Messaging
       end
     end
 
+    # Close all channels and then disconnect all the connections.
+    #
+    # @return []
+    # @api public
+    def disconnect
+      channels.each do |chan|
+        chan.close
+      end
+
+      connections.each do |conn|
+        conn.disconnect
+      end
+    end
+
     protected
 
     # @return [#info, #debug, #error]
@@ -132,6 +150,34 @@ module Messaging
     end
 
     private
+
+    # @return [Array<AMQP::Channels>]
+    # @api private
+    def channels
+      @channels ||= []
+    end
+
+    # @param channel [AMQP::Channel]
+    # @return [AMQP::Channel]
+    # @api private
+    def register_channel(channel)
+      channels << channel
+      channel
+    end
+
+    # @return [Array<AMQP::Connection>]
+    # @api private
+    def connections
+      @connections ||= []
+    end
+
+    # @param connection [AMQP::Connection]
+    # @return [AMQP::Connection]
+    # @api private
+    def register_connection(connection)
+      connections << connection
+      connection
+    end
 
     # @param name [String]
     # @return [Boolean]

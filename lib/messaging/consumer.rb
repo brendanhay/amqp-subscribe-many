@@ -72,20 +72,6 @@ module Messaging
       raise NotImplementedError
     end
 
-    # Close all consumer_channels and then disconnect all the consumer_connections.
-    #
-    # @return []
-    # @api public
-    def disconnect
-      consumer_channels.each do |chan|
-        chan.close
-      end
-
-      consumer_connections.each do |conn|
-        conn.disconnect
-      end
-    end
-
     # Subscribe to a queue which will invoke the supplied block when
     # a message is received.
     # Additionally declaring a binding to the specified exchange/key pair.
