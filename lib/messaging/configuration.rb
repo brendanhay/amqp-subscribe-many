@@ -37,6 +37,10 @@ module Messaging
     #   @return [Integer]
     attr_accessor :reconnect_delay
 
+    # @!attribute [r] heartbeat
+    #   @return [Integer]
+    attr_accessor :heartbeat
+
     # @!attribute [r] logger
     #   @return [#info, #debug, #error]
     attr_accessor :logger
@@ -49,6 +53,7 @@ module Messaging
       @exchange_options = { :auto_delete => false, :durable => true }
       @queue_options    = exchange_options
       @reconnect_delay  = 5
+      @heartbeat        = 5
       @logger           = Logger.new(STDOUT)
     end
   end

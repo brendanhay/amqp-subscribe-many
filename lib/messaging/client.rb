@@ -24,7 +24,9 @@ module Messaging
     # @api public
     def open_connection(uri, delay = nil)
       delay ||= config.reconnect_delay
+
       options = AMQP::Client.parse_connection_uri(uri)
+      options.merge!(:heartbeat => config.heartbeat)
 
       res = AMQP.connect(options) do |connection, open_ok|
         # Handle TCP connection errors
