@@ -42,7 +42,7 @@ Drawbacks:
 * Another hop in the form of the load-balancer
 * A node going down, needs to be brought back up to access the messages
 
-A common error is to conflate availability and durability. In this case, they are treated as seperate concerns with the form of availability on offer refering to the ability of all connected clients to get a message from point to point under most conditions.
+A common error is to conflate availability and durability. In this case, they are treated as separate concerns with the form of availability on offer refering to the ability of all connected clients to get a message from point to point under most conditions.
 
 Durability requires messages to be published as persistent and manual intervention in the case of a node crash to bring the failed node (or disk) back into consumer awareness, to ensure the messages are flushed.
 
@@ -62,13 +62,17 @@ Run all the tests:
 make test
 ```
 
+
 <a name="deprecations" />
 
 Deprecations
 ------------
 
-As of 0.2.2:
-* requiring this library via `require 'messaging'` is deprecated. Please use `require 'amqp_subscribe_many'` instead.
+**Version 0.2.2:**
+
+* Requiring this library via `require 'messaging'` is deprecated. Please use `require 'amqp_subscribe_many'` instead.
+
+
 
 <a name="contribute" />
 
