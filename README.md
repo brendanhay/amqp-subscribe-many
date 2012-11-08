@@ -9,6 +9,7 @@ Table of Contents
 
 * [Introduction](#introduction)
 * [Testing](#test)
+* [Deprecations](#deprecations)
 * [Contribute](#contribute)
 * [Licence](#licence)
 
@@ -61,6 +62,13 @@ Run all the tests:
 make test
 ```
 
+<a name="deprecations" />
+
+Deprecations
+------------
+
+As of 0.2.2:
+* requiring this library via `require 'messaging'` is deprecated. Please use `require 'amqp_subscribe_many'` instead.
 
 <a name="contribute" />
 

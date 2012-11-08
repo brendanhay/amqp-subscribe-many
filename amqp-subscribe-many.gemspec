@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{amqp-subscribe-many}
-  s.version = "0.2.1"
+  s.version = "0.2.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{brendanhay}]
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
     "examples/producer_processor.rb",
     "examples/run",
     "img/amqp-subscribe-many.png",
+    "lib/amqp_subscribe_many.rb",
     "lib/messaging.rb",
     "lib/messaging/client.rb",
     "lib/messaging/configuration.rb",

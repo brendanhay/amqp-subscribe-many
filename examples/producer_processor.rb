@@ -1,4 +1,4 @@
-require "messaging"
+require "amqp_subscribe_many"
 
 # A publish only example
 class ProducerProcessor
