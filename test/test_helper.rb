@@ -4,7 +4,7 @@ SimpleCov.start
 
 require "minitest/autorun"
 require "mocha"
-require "messaging"
+require "amqp_subscribe_many"
 require "logger"
 
 class MiniTestSetup < MiniTest::Unit
