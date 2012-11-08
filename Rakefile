@@ -49,7 +49,7 @@ Jeweler::RubygemsDotOrgTasks.new
 
 Jeweler::Tasks.new do |gem|
   gem.name        = "amqp-subscribe-many"
-  gem.version     = "0.2.1"
+  gem.version     = "0.2.2"
   gem.homepage    = "http://github.com/brendanhay/amqp-subscribe-many"
   gem.license     = "MPL"
   gem.summary     = "An implementation of the publish one, subscribe many pattern"
